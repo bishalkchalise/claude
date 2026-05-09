@@ -1,0 +1,216 @@
+from textwrap import wrap
+from pathlib import Path
+
+TITLE = "Campaign Finance and Political Funding in Australia"
+SUBTITLE = "National, State/Territory, and Local Government Frameworks"
+DATE = "Accuracy check date: 9 May 2026 (UTC)"
+
+sections = [
+("Executive Summary", """Australia regulates campaign finance through a layered federal system rather than a single national code. The Commonwealth, each state and territory, and (through state law) local government elections each operate under distinct statutes, definitions, thresholds, and enforcement designs. That fragmentation creates a demanding compliance environment for parties, candidates, third-party campaigners, associated entities, and donors active across more than one jurisdiction.
+
+The contemporary policy direction is toward stronger transparency, tighter controls on source and flow of political money, and broader regulation of non-party campaign actors. The most significant current national development is the Electoral Legislation Amendment (Electoral Reform) Act 2025, with key elements commencing from 1 July 2026, including lower disclosure thresholds and faster disclosure architecture during election periods.
+
+At state level, reform intensity has increased in the past decade. New South Wales and Queensland have mature cap-and-disclosure systems with strong local-election interfaces; Victoria has strengthened disclosure and anti-avoidance design; Western Australia implemented major 2023 reform architecture with 2024 operational effects; South Australia has shifted to a much more interventionist model through 2024 amendments; Tasmania modernised its framework via the Electoral Disclosure and Funding Act 2023; ACT and NT continue to operate structured disclosure and expenditure frameworks with jurisdiction-specific settings.
+
+Key unresolved policy questions remain: whether harmonisation should be pursued nationally, how to design real-time transparency without disproportionate burden, whether expenditure caps suppress or improve electoral fairness, how to manage third-party advocacy without chilling participation, and whether local-government integrity risks justify stronger donor-source controls in all states."""),
+("How to Read This Report", """This report is structured as a legal-policy reference and should be read with current statutory instruments and regulator guidance. Amounts such as disclosure thresholds and caps may be indexed or altered by commencement schedules. For legal compliance, readers should verify current figures and operative provisions against the latest legislation and regulator notices in the specific jurisdiction and election type concerned."""),
+("Part I: System Architecture and Constitutional Context", """Australia’s framework is constitutionally plural. The Commonwealth regulates federal elections under the Commonwealth Electoral Act 1918, primarily through Part XX (funding and disclosure), related anti-avoidance provisions, and amendments that address foreign influence and third-party campaign activity.
+
+States and territories legislate separately for their own elections. Local-government election funding and disclosure is generally determined under state/territory law, sometimes integrated into state electoral finance statutes and sometimes separated through local government electoral frameworks.
+
+The High Court’s implied freedom of political communication does not prohibit campaign finance regulation per se, but it requires proportionality: restrictions must be justified in relation to legitimate purposes such as anti-corruption, transparency, and electoral integrity. This constitutional dimension significantly influences the design of caps, bans, and third-party controls."""),
+("Part II: Commonwealth Framework", """Primary legislation: Commonwealth Electoral Act 1918.
+Administrator: Australian Electoral Commission (AEC).
+
+Core elements historically include: annual disclosure by parties/candidates/associated entities/significant donors, public election funding tied to electoral performance, and treatment of entities incurring political expenditure for federal purposes.
+
+Major modernisation phases:
+1) Expansion and restructuring of entities subject to obligations (including third-party campaigners and political campaigners).
+2) Foreign donation restrictions and associated prohibitions to reduce foreign influence channels.
+3) 2025–2026 reform package introducing lower thresholds and faster disclosure settings.
+
+Transition point: from 1 July 2026, AEC reform guidance indicates substantial operational change in disclosure thresholds, timing, and return structures. For practitioners, the transition period requires careful mapping of which rules apply to donations received before and after commencement, and whether election-period rapid reporting is triggered."""),
+("Part III: State and Territory Regimes", """New South Wales (NSW)
+The Electoral Funding Act 2018 (NSW) is one of Australia’s most developed campaign finance systems, with donation caps, expenditure caps, disclosure obligations, and structured enforcement. The scheme is deeply relevant to local government elections and has influenced broader national debate on cap design and anti-circumvention controls.
+
+Victoria (VIC)
+The Electoral Act 2002 (Vic), particularly post-reform architecture, establishes disclosure and regulatory controls for state elections with anti-avoidance logic and interaction with integrity measures. Local government campaign finance oversight is not simply a carbon copy of state election settings and must be checked against dedicated local rules and oversight pathways.
+
+Queensland (QLD)
+Queensland’s regime spans both the Electoral Act 1992 and Local Government Electoral Act 2011, creating an integrated but complex system that addresses donation disclosure, expenditure disclosure, caps, and certain donor-source restrictions. Queensland’s local election regulation is central to its integrity model.
+
+Western Australia (WA)
+WA’s Electoral Act 1907 has been materially reshaped by recent amendment rounds. Reforms with 2024 operational impact strengthened disclosure controls and altered obligations for campaign participants. Practitioners must check WAEC guidance because transitional detail affects practical compliance.
+
+South Australia (SA)
+Through major 2024 amendments to the Electoral Act 1985, SA has moved toward a restrictive model with broad prohibitions and carefully delimited exceptions. This positions SA as a jurisdiction with stronger direct constraints on private political funding channels than many peers.
+
+Tasmania (TAS)
+Tasmania’s Electoral Disclosure and Funding Act 2023 is a modern dedicated statute, replacing older fragmented arrangements and strengthening system clarity.
+
+Australian Capital Territory (ACT)
+The ACT Electoral Act 1992 contains developed disclosure and campaign finance settings, including explicit treatment of non-party campaign actors.
+
+Northern Territory (NT)
+The NT Electoral Act 2004 includes funding and disclosure controls with reporting obligations in Part 10, tailored to territory electoral structures."""),
+("Part IV: Local Government Elections", """Local government is the least harmonised layer nationwide and often the highest-risk integrity environment due to the proximity of electoral activity to land use, procurement, and development decisions.
+
+Three operating models are visible:
+1) Integration model (e.g., stronger integration in NSW/QLD),
+2) Hybrid model (state electoral controls plus separate local-government gift/disclosure rules),
+3) Parallel integrity model (local-government-specific frameworks administered through different institutions).
+
+Policy attention repeatedly focuses on whether council-level donor restrictions should be stricter than state-level baselines, especially where development interests create concentrated influence incentives."""),
+("Part V: Reform Trajectory (Historical and Contemporary)", """1980s: modern disclosure/public funding architecture matures at Commonwealth level.
+1990s–2000s: threshold/indexation and transparency lag become persistent controversy.
+2010s: rising focus on circumvention, associated entities, and third-party expenditure.
+2018 Commonwealth reforms: significant tightening of foreign-donation and campaigner regulation.
+2020s state wave: multiple jurisdictions redesign cap/disclosure systems.
+2025 Commonwealth reform statute: prepares major shift commencing 1 July 2026, with lower threshold and faster disclosure in election periods.
+
+Reform trend summary: movement from static annual transparency toward dynamic, closer-to-real-time reporting and stronger source restrictions."""),
+("Part VI: Data, Disclosure Practice, and Evidence", """Disclosure data are typically fragmented across jurisdictions, publication cadences, and return formats. Analysts face recurring issues:
+- delayed visibility in annual-return systems,
+- inconsistent donor/entity categorisation,
+- limited interoperability for cross-jurisdiction analysis,
+- compliance under-reporting risk where audit intensity is low,
+- attribution challenges for complex fundraising structures.
+
+Recent reforms seek to reduce these limitations by accelerating publication and expanding regulated actor categories. However, administrative burden and data-standardisation constraints remain central implementation issues."""),
+("Part VII: Research Literature and Policy Debate", """Australian legal and policy scholarship has concentrated on seven clusters:
+1) transparency quality (timeliness, completeness, usability),
+2) cap effectiveness and unintended consequences,
+3) constitutional validity and proportionality,
+4) third-party campaign regulation and democratic participation,
+5) foreign influence and sovereignty protection,
+6) public funding design and incumbent effects,
+7) local-government corruption risk controls.
+
+Across this literature, there is broad agreement on the value of transparency and anti-circumvention measures, but less agreement on the optimal strictness of bans and cap levels, and on how to balance burden against democratic participation."""),
+("Part VIII: Practical Compliance Guide", """Step 1: Determine legal status (party, candidate, associated entity, third-party campaigner, donor, publisher).
+Step 2: Determine election context (federal/state/local; ordinary/general/by-election).
+Step 3: Identify operative law version and commencement date.
+Step 4: Confirm threshold/cap values and indexation notices.
+Step 5: Implement source-verification and prohibited-source screening.
+Step 6: Establish contemporaneous records for receipts, liabilities, and electoral expenditure.
+Step 7: Build deadline matrix (annual returns, election returns, expedited event-driven disclosures).
+Step 8: Conduct legal review for cross-jurisdiction campaigning.
+
+For organisations active nationally, a central controls framework with jurisdiction-specific modules is usually more reliable than ad hoc campaign-level compliance."""),
+("References (Primary Laws, Regulators, Parliamentary/Policy Sources)", """Commonwealth
+- Commonwealth Electoral Act 1918: https://www.legislation.gov.au/C1918A00027
+- AEC funding and disclosure reform hub: https://www.aec.gov.au/FADReform/
+- AEC changes explained: https://www.aec.gov.au/FADReform/factsheets/changes-explained.htm
+- AEC disclosure overview: https://www.aec.gov.au/FADReform/factsheets/disclosure-overview.htm
+- AEC financial disclosure portal: https://www.aec.gov.au/parties_and_representatives/financial_disclosure/
+
+NSW
+- Electoral Funding Act 2018 (NSW): https://legislation.nsw.gov.au/view/html/inforce/current/act-2018-020
+- NSWEC guidance: https://elections.nsw.gov.au/about-us/legislation/funding-legislation/guidelines-under-the-electoral-funding-act-2018
+
+Victoria
+- Electoral Act 2002 (Vic): https://www.legislation.vic.gov.au/in-force/acts/electoral-act-2002
+- VEC disclosures: https://www.vec.vic.gov.au/disclosures/
+
+Queensland
+- Electoral Act 1992 (Qld): https://www.legislation.qld.gov.au/view/html/inforce/current/act-1992-028
+- Local Government Electoral Act 2011 (Qld): https://www.legislation.qld.gov.au/view/html/inforce/current/act-2011-031
+- ECQ disclosure guidance: https://www.ecq.qld.gov.au/donations-and-expenditure-disclosure/disclosure-of-political-donations-and-electoral-expenditure
+
+Western Australia
+- Electoral Act 1907 (WA): https://www.legislation.wa.gov.au/legislation/statutes.nsf/main_mrtitle_308_homepage.html
+- WAEC reform notes: https://www.elections.wa.gov.au/electoralamendments2023
+
+South Australia
+- Electoral Act 1985 (SA): https://www.legislation.sa.gov.au/lz?path=%2Fc%2Fa%2Felectoral%20act%201985
+
+Tasmania
+- Electoral Disclosure and Funding Act 2023 (Tas): https://www.legislation.tas.gov.au/view/html/inforce/current/act-2023-020
+
+ACT
+- Electoral Act 1992 (ACT): https://www.legislation.act.gov.au/a/1992-71
+
+NT
+- Electoral Act 2004 (NT): https://legislation.nt.gov.au/en/Legislation/ELECTORAL-ACT-2004
+
+Parliamentary/policy
+- Parliamentary Library quick guide: https://www.aph.gov.au/About_Parliament/Parliamentary_departments/Parliamentary_Library/Research/Quick_Guides/2022-23/ElectionFundingAndDisclosure2022Update
+- JSCEM materials: https://www.aph.gov.au/Parliamentary_Business/Committees/Joint/Electoral_Matters/Operationandimpact"""),
+]
+
+class PDF:
+    def __init__(self):
+        self.objects = []
+        self.pages = []
+        self.font_id = self.add_obj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>')
+
+    def add_obj(self, s):
+        self.objects.append(s)
+        return len(self.objects)
+
+    def add_page(self, lines):
+        content = 'BT /F1 11 Tf 50 790 Td 14 TL\n'
+        first = True
+        for ln in lines:
+            esc = ln.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
+            if first:
+                content += f'({esc}) Tj\n'
+                first = False
+            else:
+                content += f'T* ({esc}) Tj\n'
+        content += 'ET'
+        c_id = self.add_obj(f'<< /Length {len(content.encode())} >>\nstream\n{content}\nendstream')
+        p_id = self.add_obj(f'<< /Type /Page /Parent PAGES_ID 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 {self.font_id} 0 R >> >> /Contents {c_id} 0 R >>')
+        self.pages.append(p_id)
+
+    def render(self):
+        kids = ' '.join(f'{p} 0 R' for p in self.pages)
+        pages_obj = f'<< /Type /Pages /Count {len(self.pages)} /Kids [ {kids} ] >>'
+        pages_id = self.add_obj(pages_obj)
+        for i,o in enumerate(self.objects):
+            self.objects[i] = o.replace('PAGES_ID', str(pages_id))
+        catalog_id = self.add_obj(f'<< /Type /Catalog /Pages {pages_id} 0 R >>')
+
+        out = '%PDF-1.4\n'
+        offsets=[0]
+        for i,o in enumerate(self.objects, start=1):
+            offsets.append(len(out.encode()))
+            out += f'{i} 0 obj\n{o}\nendobj\n'
+        xref = len(out.encode())
+        out += f'xref\n0 {len(self.objects)+1}\n0000000000 65535 f \n'
+        for i in range(1,len(self.objects)+1):
+            out += f'{offsets[i]:010d} 00000 n \n'
+        out += f'trailer\n<< /Size {len(self.objects)+1} /Root {catalog_id} 0 R >>\nstartxref\n{xref}\n%%EOF'
+        return out.encode('latin-1','ignore')
+
+
+def build_lines():
+    lines=[]
+    lines.extend([TITLE, SUBTITLE, DATE, '', 'TABLE OF CONTENTS'])
+    for i,(h,_) in enumerate(sections,1):
+        lines.append(f'{i}. {h}')
+    lines.append('')
+    for i,(h,body) in enumerate(sections,1):
+        lines.extend([f'SECTION {i}: {h}', '-'*80])
+        for para in body.split('\n\n'):
+            if not para.strip():
+                lines.append('')
+                continue
+            for raw in para.split('\n'):
+                wraps = wrap(raw, width=95) or ['']
+                lines.extend(wraps)
+            lines.append('')
+    return lines
+
+lines = build_lines()
+pdf=PDF()
+per=52
+for i in range(0,len(lines),per):
+    page = lines[i:i+per]
+    footer = f'Page {i//per + 1}'
+    page = page + ['']*(per-len(page)-1) + [footer]
+    pdf.add_page(page)
+
+Path('australia_campaign_finance_report.pdf').write_bytes(pdf.render())
+Path('australia_campaign_finance_report.txt').write_text('\n'.join(lines))
+print('generated pages:', len(range(0,len(lines),per)))
