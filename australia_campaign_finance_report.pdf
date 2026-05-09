@@ -1,410 +1,311 @@
 %PDF-1.4
 1 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+<< /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Length 3666 >>
-stream
-BT /F1 11 Tf 50 790 Td 14 TL
-(Campaign Finance and Political Funding in Australia) Tj
-T* (National, State/Territory, and Local Government Frameworks) Tj
-T* (Accuracy check date: 9 May 2026 \(UTC\)) Tj
-T* () Tj
-T* (TABLE OF CONTENTS) Tj
-T* (1. Executive Summary) Tj
-T* (2. How to Read This Report) Tj
-T* (3. Part I: System Architecture and Constitutional Context) Tj
-T* (4. Part II: Commonwealth Framework) Tj
-T* (5. Part III: State and Territory Regimes) Tj
-T* (6. Part IV: Local Government Elections) Tj
-T* (7. Part V: Reform Trajectory \(Historical and Contemporary\)) Tj
-T* (8. Part VI: Data, Disclosure Practice, and Evidence) Tj
-T* (9. Part VII: Research Literature and Policy Debate) Tj
-T* (10. Part VIII: Practical Compliance Guide) Tj
-T* (11. References \(Primary Laws, Regulators, Parliamentary/Policy Sources\)) Tj
-T* () Tj
-T* (SECTION 1: Executive Summary) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (Australia regulates campaign finance through a layered federal system rather than a single) Tj
-T* (national code. The Commonwealth, each state and territory, and \(through state law\) local) Tj
-T* (government elections each operate under distinct statutes, definitions, thresholds, and) Tj
-T* (enforcement designs. That fragmentation creates a demanding compliance environment for parties,) Tj
-T* (candidates, third-party campaigners, associated entities, and donors active across more than) Tj
-T* (one jurisdiction.) Tj
-T* () Tj
-T* (The contemporary policy direction is toward stronger transparency, tighter controls on source) Tj
-T* (and flow of political money, and broader regulation of non-party campaign actors. The most) Tj
-T* (significant current national development is the Electoral Legislation Amendment \(Electoral) Tj
-T* (Reform\) Act 2025, with key elements commencing from 1 July 2026, including lower disclosure) Tj
-T* (thresholds and faster disclosure architecture during election periods.) Tj
-T* () Tj
-T* (At state level, reform intensity has increased in the past decade. New South Wales and) Tj
-T* (Queensland have mature cap-and-disclosure systems with strong local-election interfaces;) Tj
-T* (Victoria has strengthened disclosure and anti-avoidance design; Western Australia implemented) Tj
-T* (major 2023 reform architecture with 2024 operational effects; South Australia has shifted to a) Tj
-T* (much more interventionist model through 2024 amendments; Tasmania modernised its framework via) Tj
-T* (the Electoral Disclosure and Funding Act 2023; ACT and NT continue to operate structured) Tj
-T* (disclosure and expenditure frameworks with jurisdiction-specific settings.) Tj
-T* () Tj
-T* (Key unresolved policy questions remain: whether harmonisation should be pursued nationally, how) Tj
-T* (to design real-time transparency without disproportionate burden, whether expenditure caps) Tj
-T* (suppress or improve electoral fairness, how to manage third-party advocacy without chilling) Tj
-T* (participation, and whether local-government integrity risks justify stronger donor-source) Tj
-T* (controls in all states.) Tj
-T* () Tj
-T* (SECTION 2: How to Read This Report) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (This report is structured as a legal-policy reference and should be read with current statutory) Tj
-T* (instruments and regulator guidance. Amounts such as disclosure thresholds and caps may be) Tj
-T* (indexed or altered by commencement schedules. For legal compliance, readers should verify) Tj
-T* (current figures and operative provisions against the latest legislation and regulator notices) Tj
-T* (Page 1) Tj
-ET
-endstream
+<< /Type /Pages /Count 5 /Kids [ 3 0 R 5 0 R 7 0 R 9 0 R 11 0 R ] >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 14 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 2 0 R >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 13 0 R >> >> /Contents 4 0 R >>
 endobj
 4 0 obj
-<< /Length 3558 >>
+<< /Length 2669 >>
 stream
-BT /F1 11 Tf 50 790 Td 14 TL
-(in the specific jurisdiction and election type concerned.) Tj
+BT /F1 10 Tf 50 820 Td 12 TL
+(# Campaign Financing and Political Funding Rules in Australia \(National, State, and Local\)) Tj
 T* () Tj
-T* (SECTION 3: Part I: System Architecture and Constitutional Context) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (Australias framework is constitutionally plural. The Commonwealth regulates federal elections) Tj
-T* (under the Commonwealth Electoral Act 1918, primarily through Part XX \(funding and disclosure\),) Tj
-T* (related anti-avoidance provisions, and amendments that address foreign influence and third-) Tj
-T* (party campaign activity.) Tj
+T* (**Date checked:** 9 May 2026 \(UTC\)) Tj
 T* () Tj
-T* (States and territories legislate separately for their own elections. Local-government election) Tj
-T* (funding and disclosure is generally determined under state/territory law, sometimes integrated) Tj
-T* (into state electoral finance statutes and sometimes separated through local government) Tj
-T* (electoral frameworks.) Tj
+T* (## Table of Contents) Tj
+T* (1. Executive summary) Tj
+T* (2. Constitutional and institutional context) Tj
+T* (3. Commonwealth \(federal\) rules) Tj
+T* (4. State and territory frameworks \(and local-government interaction\)) Tj
+T* (5. Local-government layer: how it is regulated in practice) Tj
+T* (6. Major reforms over time) Tj
+T* (7. Key policy debates) Tj
+T* (8. Research and evidence base) Tj
+T* (9. Practical compliance checklist) Tj
+T* (10. References \(legislation, regulators, research\)) Tj
 T* () Tj
-T* (The High Courts implied freedom of political communication does not prohibit campaign finance) Tj
-T* (regulation per se, but it requires proportionality: restrictions must be justified in relation) Tj
-T* (to legitimate purposes such as anti-corruption, transparency, and electoral integrity. This) Tj
-T* (constitutional dimension significantly influences the design of caps, bans, and third-party) Tj
-T* (controls.) Tj
+T* (## 1\) Executive summary) Tj
+T* (Australia has a **federal, multi-level political finance system**. There is no single Australian) Tj
+T* (campaign finance code. Instead, obligations vary by election type and jurisdiction. Core regulatory) Tj
+T* (levers are:) Tj
+T* (- disclosure/reporting of donations and electoral expenditure) Tj
+T* (- caps on donations and/or expenditure \(in some jurisdictions\)) Tj
+T* (- source restrictions \(especially foreign donations; and sectoral bans in some states\)) Tj
+T* (- public funding mechanisms) Tj
+T* (- compliance/audit/enforcement powers.) Tj
 T* () Tj
-T* (SECTION 4: Part II: Commonwealth Framework) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (Primary legislation: Commonwealth Electoral Act 1918.) Tj
-T* (Administrator: Australian Electoral Commission \(AEC\).) Tj
+T* (As of this review date, a major national reform package \(Electoral Reform Act 2025\) is implementing) Tj
+T* (significant Commonwealth changes from **1 July 2026**, including lower disclosure thresholds and faster) Tj
+T* (disclosure in election periods.) Tj
 T* () Tj
-T* (Core elements historically include: annual disclosure by parties/candidates/associated) Tj
-T* (entities/significant donors, public election funding tied to electoral performance, and) Tj
-T* (treatment of entities incurring political expenditure for federal purposes.) Tj
+T* (## 2\) Constitutional and institutional context) Tj
+T* (- **Commonwealth:** regulated primarily under the *Commonwealth Electoral Act 1918* \(Part XX and related) Tj
+T* (provisions\), administered by the Australian Electoral Commission \(AEC\).) Tj
+T* (- **States/territories:** each has separate electoral finance statutes and regulators.) Tj
+T* (- **Local government:** usually regulated by **state/territory law**, either in the same) Tj
+T* (funding/disclosure statute used for state elections or via dedicated local-government election) Tj
+T* (legislation.) Tj
 T* () Tj
-T* (Major modernisation phases:) Tj
-T* (1\) Expansion and restructuring of entities subject to obligations \(including third-party) Tj
-T* (campaigners and political campaigners\).) Tj
-T* (2\) Foreign donation restrictions and associated prohibitions to reduce foreign influence) Tj
-T* (channels.) Tj
-T* (3\) 20252026 reform package introducing lower thresholds and faster disclosure settings.) Tj
+T* (## 3\) Commonwealth \(federal\) rules) Tj
+T* (### 3.1 Core law and administrator) Tj
+T* (- *Commonwealth Electoral Act 1918*.) Tj
+T* (- AEC Funding and Disclosure framework.) Tj
 T* () Tj
-T* (Transition point: from 1 July 2026, AEC reform guidance indicates substantial operational) Tj
-T* (change in disclosure thresholds, timing, and return structures. For practitioners, the) Tj
-T* (transition period requires careful mapping of which rules apply to donations received before) Tj
-T* (and after commencement, and whether election-period rapid reporting is triggered.) Tj
+T* (### 3.2 Key architecture) Tj
+T* (Historically, Commonwealth law has emphasized disclosure and public funding, with tighter controls added) Tj
+T* (progressively \(including foreign-donation controls and regulation of third-party political campaigners\).) Tj
 T* () Tj
-T* (SECTION 5: Part III: State and Territory Regimes) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (New South Wales \(NSW\)) Tj
-T* (The Electoral Funding Act 2018 \(NSW\) is one of Australias most developed campaign finance) Tj
-T* (systems, with donation caps, expenditure caps, disclosure obligations, and structured) Tj
-T* (enforcement. The scheme is deeply relevant to local government elections and has influenced) Tj
-T* (broader national debate on cap design and anti-circumvention controls.) Tj
-T* () Tj
-T* (Victoria \(VIC\)) Tj
-T* (The Electoral Act 2002 \(Vic\), particularly post-reform architecture, establishes disclosure and) Tj
-T* (regulatory controls for state elections with anti-avoidance logic and interaction with) Tj
-T* (Page 2) Tj
+T* (### 3.3 Current reform phase \(critical\)) Tj
 ET
 endstream
 endobj
 5 0 obj
-<< /Type /Page /Parent 14 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 4 0 R >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 13 0 R >> >> /Contents 6 0 R >>
 endobj
 6 0 obj
-<< /Length 3092 >>
+<< /Length 3056 >>
 stream
-BT /F1 11 Tf 50 790 Td 14 TL
-(integrity measures. Local government campaign finance oversight is not simply a carbon copy of) Tj
-T* (state election settings and must be checked against dedicated local rules and oversight) Tj
-T* (pathways.) Tj
+BT /F1 10 Tf 50 820 Td 12 TL
+(AEC guidance states the *Electoral Legislation Amendment \(Electoral Reform\) Act 2025* is a major) Tj
+T* (overhaul, with changes commencing from **1 July 2026**, including:) Tj
+T* (- lower disclosure threshold \(AEC fact sheets indicate $5,000, indexed after general elections\)) Tj
+T* (- expedited/near-real-time donation disclosure during election periods) Tj
+T* (- revised annual/election return arrangements) Tj
+T* (- revised publication and compliance settings.) Tj
 T* () Tj
-T* (Queensland \(QLD\)) Tj
-T* (Queenslands regime spans both the Electoral Act 1992 and Local Government Electoral Act 2011,) Tj
-T* (creating an integrated but complex system that addresses donation disclosure, expenditure) Tj
-T* (disclosure, caps, and certain donor-source restrictions. Queenslands local election regulation) Tj
-T* (is central to its integrity model.) Tj
+T* (Because transitional arrangements and subordinate instruments matter, users should verify operative) Tj
+T* (dates and instruments on the Federal Register and AEC reform pages before relying on a specific) Tj
+T* (obligation.) Tj
 T* () Tj
-T* (Western Australia \(WA\)) Tj
-T* (WAs Electoral Act 1907 has been materially reshaped by recent amendment rounds. Reforms with) Tj
-T* (2024 operational impact strengthened disclosure controls and altered obligations for campaign) Tj
-T* (participants. Practitioners must check WAEC guidance because transitional detail affects) Tj
-T* (practical compliance.) Tj
+T* (## 4\) State and territory frameworks) Tj
+T* (> Important: rules differ substantially, and some thresholds/caps are indexed or changed by periodic) Tj
+T* (notices.) Tj
 T* () Tj
-T* (South Australia \(SA\)) Tj
-T* (Through major 2024 amendments to the Electoral Act 1985, SA has moved toward a restrictive) Tj
-T* (model with broad prohibitions and carefully delimited exceptions. This positions SA as a) Tj
-T* (jurisdiction with stronger direct constraints on private political funding channels than many) Tj
-T* (peers.) Tj
+T* (### New South Wales \(NSW\)) Tj
+T* (- Primary law: *Electoral Funding Act 2018 \(NSW\)*.) Tj
+T* (- Features: donation caps, expenditure caps, disclosure framework, and application to state and local) Tj
+T* (election participants under NSWs scheme.) Tj
+T* (- Regulator: NSW Electoral Commission.) Tj
 T* () Tj
-T* (Tasmania \(TAS\)) Tj
-T* (Tasmanias Electoral Disclosure and Funding Act 2023 is a modern dedicated statute, replacing) Tj
-T* (older fragmented arrangements and strengthening system clarity.) Tj
+T* (### Victoria \(VIC\)) Tj
+T* (- Primary law: *Electoral Act 2002 \(Vic\)* \(Part 12 and related amendments\).) Tj
+T* (- Features: caps/disclosure framework for state elections; foreign-donation restrictions; anti-avoidance) Tj
+T* (provisions.) Tj
+T* (- Local-council donation regulation is administered separately \(via local government integrity) Tj
+T* (architecture\), even though state-level rules are in the Electoral Act.) Tj
+T* (- Regulator: Victorian Electoral Commission \(state-level disclosures\).) Tj
 T* () Tj
-T* (Australian Capital Territory \(ACT\)) Tj
-T* (The ACT Electoral Act 1992 contains developed disclosure and campaign finance settings,) Tj
-T* (including explicit treatment of non-party campaign actors.) Tj
+T* (### Queensland \(QLD\)) Tj
+T* (- Primary laws: *Electoral Act 1992 \(Qld\)* and *Local Government Electoral Act 2011 \(Qld\)*.) Tj
+T* (- Features: disclosure regime for political donations/expenditure, donation caps, expenditure caps, and) Tj
+T* (restrictions affecting certain donor classes.) Tj
+T* (- Regulator: Electoral Commission of Queensland.) Tj
 T* () Tj
-T* (Northern Territory \(NT\)) Tj
-T* (The NT Electoral Act 2004 includes funding and disclosure controls with reporting obligations) Tj
-T* (in Part 10, tailored to territory electoral structures.) Tj
+T* (### Western Australia \(WA\)) Tj
+T* (- Primary law: *Electoral Act 1907 \(WA\)* \(as amended, including 2023 reforms\) plus regulations.) Tj
+T* (- Features: enhanced disclosure and political finance controls from July 2024 reforms, including foreign) Tj
+T* (donation settings and spending/disclosure controls.) Tj
+T* (- Regulator: WA Electoral Commission.) Tj
+T* (- Local-government gift rules also operate under WA local-government election framework.) Tj
 T* () Tj
-T* (SECTION 6: Part IV: Local Government Elections) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (Local government is the least harmonised layer nationwide and often the highest-risk integrity) Tj
-T* (environment due to the proximity of electoral activity to land use, procurement, and) Tj
-T* (development decisions.) Tj
-T* () Tj
-T* (Three operating models are visible:) Tj
-T* (1\) Integration model \(e.g., stronger integration in NSW/QLD\),) Tj
-T* (2\) Hybrid model \(state electoral controls plus separate local-government gift/disclosure) Tj
-T* (rules\),) Tj
-T* (3\) Parallel integrity model \(local-government-specific frameworks administered through) Tj
-T* (different institutions\).) Tj
-T* () Tj
-T* (Policy attention repeatedly focuses on whether council-level donor restrictions should be) Tj
-T* (stricter than state-level baselines, especially where development interests create concentrated) Tj
-T* (influence incentives.) Tj
-T* () Tj
-T* (SECTION 7: Part V: Reform Trajectory \(Historical and Contemporary\)) Tj
-T* (Page 3) Tj
+T* (### South Australia \(SA\)) Tj
+T* (- Primary law: *Electoral Act 1985 \(SA\)* \(notably amended by the *Electoral \(Accountability and) Tj
+T* (Integrity\) Amendment Act 2024*\).) Tj
+T* (- Features: SA has moved to one of the strongest interventionist models, with broad donation) Tj
+T* (prohibitions and tightly structured exceptions/controls \(including treatment of new entrants and third) Tj
+T* (parties under caps/reporting rules\).) Tj
 ET
 endstream
 endobj
 7 0 obj
-<< /Type /Page /Parent 14 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 6 0 R >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 13 0 R >> >> /Contents 8 0 R >>
 endobj
 8 0 obj
-<< /Length 3594 >>
+<< /Length 3074 >>
 stream
-BT /F1 11 Tf 50 790 Td 14 TL
-(--------------------------------------------------------------------------------) Tj
-T* (1980s: modern disclosure/public funding architecture matures at Commonwealth level.) Tj
-T* (1990s2000s: threshold/indexation and transparency lag become persistent controversy.) Tj
-T* (2010s: rising focus on circumvention, associated entities, and third-party expenditure.) Tj
-T* (2018 Commonwealth reforms: significant tightening of foreign-donation and campaigner) Tj
-T* (regulation.) Tj
-T* (2020s state wave: multiple jurisdictions redesign cap/disclosure systems.) Tj
-T* (2025 Commonwealth reform statute: prepares major shift commencing 1 July 2026, with lower) Tj
-T* (threshold and faster disclosure in election periods.) Tj
+BT /F1 10 Tf 50 820 Td 12 TL
+(- Regulator: Electoral Commission of South Australia.) Tj
 T* () Tj
-T* (Reform trend summary: movement from static annual transparency toward dynamic, closer-to-real-) Tj
-T* (time reporting and stronger source restrictions.) Tj
+T* (### Tasmania \(TAS\)) Tj
+T* (- Primary law: *Electoral Disclosure and Funding Act 2023 \(Tas\)*.) Tj
+T* (- Features: modernized disclosure/funding framework for Tasmanian parliamentary elections.) Tj
+T* (- Regulator: Tasmanian Electoral Commission.) Tj
 T* () Tj
-T* (SECTION 8: Part VI: Data, Disclosure Practice, and Evidence) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (Disclosure data are typically fragmented across jurisdictions, publication cadences, and return) Tj
-T* (formats. Analysts face recurring issues:) Tj
-T* (- delayed visibility in annual-return systems,) Tj
-T* (- inconsistent donor/entity categorisation,) Tj
-T* (- limited interoperability for cross-jurisdiction analysis,) Tj
-T* (- compliance under-reporting risk where audit intensity is low,) Tj
-T* (- attribution challenges for complex fundraising structures.) Tj
+T* (### Australian Capital Territory \(ACT\)) Tj
+T* (- Primary law: *Electoral Act 1992 \(ACT\)*.) Tj
+T* (- Features: disclosure obligations, donation and expenditure controls, and explicit treatment of) Tj
+T* (third-party campaigners.) Tj
+T* (- Regulator: Elections ACT.) Tj
 T* () Tj
-T* (Recent reforms seek to reduce these limitations by accelerating publication and expanding) Tj
-T* (regulated actor categories. However, administrative burden and data-standardisation constraints) Tj
-T* (remain central implementation issues.) Tj
+T* (### Northern Territory \(NT\)) Tj
+T* (- Primary law: *Electoral Act 2004 \(NT\)*.) Tj
+T* (- Features: Part 10 framework for donations, expenditure and disclosure; reporting obligations for) Tj
+T* (parties/candidates/donors and election-period controls.) Tj
+T* (- Regulator: Northern Territory Electoral Commission.) Tj
 T* () Tj
-T* (SECTION 9: Part VII: Research Literature and Policy Debate) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (Australian legal and policy scholarship has concentrated on seven clusters:) Tj
-T* (1\) transparency quality \(timeliness, completeness, usability\),) Tj
-T* (2\) cap effectiveness and unintended consequences,) Tj
-T* (3\) constitutional validity and proportionality,) Tj
-T* (4\) third-party campaign regulation and democratic participation,) Tj
-T* (5\) foreign influence and sovereignty protection,) Tj
-T* (6\) public funding design and incumbent effects,) Tj
-T* (7\) local-government corruption risk controls.) Tj
+T* (## 5\) Local-government level) Tj
+T* (There is no uniform national local-government campaign finance code. In practice:) Tj
+T* (- NSW and QLD: local election participants are directly integrated into state electoral) Tj
+T* (finance/disclosure systems.) Tj
+T* (- WA and others: local-government-specific gift/disclosure rules coexist with broader state electoral) Tj
+T* (finance law.) Tj
+T* (- Victoria: local-council candidate donations involve separate administration pathways from state) Tj
+T* (election disclosures.) Tj
 T* () Tj
-T* (Across this literature, there is broad agreement on the value of transparency and anti-) Tj
-T* (circumvention measures, but less agreement on the optimal strictness of bans and cap levels,) Tj
-T* (and on how to balance burden against democratic participation.) Tj
+T* (**Practical implication:** compliance must be mapped election-by-election \(state lower house, upper) Tj
+T* (house, council, mayoral, by-election\), because definitions of gift, political donation, aggregation,) Tj
+T* (return timing, and enforcement differ.) Tj
 T* () Tj
-T* (SECTION 10: Part VIII: Practical Compliance Guide) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (Step 1: Determine legal status \(party, candidate, associated entity, third-party campaigner,) Tj
-T* (donor, publisher\).) Tj
-T* (Step 2: Determine election context \(federal/state/local; ordinary/general/by-election\).) Tj
-T* (Step 3: Identify operative law version and commencement date.) Tj
-T* (Step 4: Confirm threshold/cap values and indexation notices.) Tj
-T* (Step 5: Implement source-verification and prohibited-source screening.) Tj
-T* (Step 6: Establish contemporaneous records for receipts, liabilities, and electoral expenditure.) Tj
-T* (Step 7: Build deadline matrix \(annual returns, election returns, expedited event-driven) Tj
-T* (Page 4) Tj
+T* (## 6\) Major reforms over time \(high-level timeline\)) Tj
+T* (- **1980s \(Commonwealth\):** public funding and modern disclosure architecture introduced.) Tj
+T* (- **2000s \(Commonwealth\):** higher disclosure thresholds with indexation became a central controversy.) Tj
+T* (- **2018 \(Commonwealth\):** *Electoral Legislation Amendment \(Electoral Funding and Disclosure Reform\)) Tj
+T* (Act 2018* tightened foreign-donation and third-party campaigner regulation.) Tj
+T* (- **20232025 \(states\):** substantial state-level redesigns \(e.g., WA amendments effective 2024; SAs) Tj
+T* (major 2024 amending Act effective from 2025 settings\).) Tj
+T* (- **20252026 \(Commonwealth\):** *Electoral Reform Act 2025* rollout from 1 July 2026, including lower) Tj
+T* (threshold and faster disclosure.) Tj
+T* () Tj
+T* (## 7\) Key policy debates) Tj
+T* (1. **Transparency timing:** annual disclosure vs near-real-time reporting.) Tj
+T* (2. **Donation caps vs free political communication:** constitutional proportionality and implied freedom) Tj
+T* (issues.) Tj
+T* (3. **Third-party regulation:** balancing anti-circumvention with civil society participation.) Tj
+T* (4. **Foreign influence controls:** broad consensus on restrictions, disagreement on scope and) Tj
 ET
 endstream
 endobj
 9 0 obj
-<< /Type /Page /Parent 14 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 8 0 R >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 13 0 R >> >> /Contents 10 0 R >>
 endobj
 10 0 obj
-<< /Length 2786 >>
+<< /Length 3345 >>
 stream
-BT /F1 11 Tf 50 790 Td 14 TL
-(disclosures\).) Tj
-T* (Step 8: Conduct legal review for cross-jurisdiction campaigning.) Tj
+BT /F1 10 Tf 50 820 Td 12 TL
+(enforcement burden.) Tj
+T* (5. **Public funding design:** anti-corruption and fairness benefits vs incumbent advantage concerns.) Tj
+T* (6. **National consistency vs federal diversity:** harmonisation could reduce compliance burden but may) Tj
+T* (reduce state experimentation.) Tj
+T* (7. **Local government vulnerability:** planning/development decision interfaces drive stronger calls for) Tj
+T* (tighter council-level donation controls.) Tj
 T* () Tj
-T* (For organisations active nationally, a central controls framework with jurisdiction-specific) Tj
-T* (modules is usually more reliable than ad hoc campaign-level compliance.) Tj
+T* (## 8\) Academic/policy research themes) Tj
+T* (Australian scholarship and policy analysis consistently examine:) Tj
+T* (- whether high thresholds and long lags reduce practical transparency) Tj
+T* (- how caps and bans alter party revenue models and campaign strategies) Tj
+T* (- constitutional litigation risk in design of caps/exemptions) Tj
+T* (- whether reforms reduce dark money and regulatory arbitrage across jurisdictions) Tj
+T* (- local-government integrity risks around property development and donor influence.) Tj
 T* () Tj
-T* (SECTION 11: References \(Primary Laws, Regulators, Parliamentary/Policy Sources\)) Tj
-T* (--------------------------------------------------------------------------------) Tj
-T* (Commonwealth) Tj
-T* (- Commonwealth Electoral Act 1918: https://www.legislation.gov.au/C1918A00027) Tj
+T* (Useful recurring sources include Parliamentary Library quick guides, JSCEM inquiries/reviews, integrity) Tj
+T* (body reports \(e.g., anti-corruption inquiries at state level\), and election regulator post-election) Tj
+T* (disclosure/compliance reports.) Tj
+T* () Tj
+T* (## 9\) Practical compliance checklist \(for campaigns/advocacy groups\)) Tj
+T* (1. Identify election type and jurisdiction first.) Tj
+T* (2. Determine whether you are a party, candidate, associated entity, third-party campaigner, donor, or) Tj
+T* (publisher/broadcaster.) Tj
+T* (3. Check current indexed thresholds/caps for the relevant financial year.) Tj
+T* (4. Confirm whether federal purpose rules are triggered for mixed campaigns.) Tj
+T* (5. Maintain contemporaneous donation source verification and expenditure records.) Tj
+T* (6. Track annual, election-period, and expedited return deadlines separately.) Tj
+T* (7. Reconcile local-government-specific rules where applicable.) Tj
+T* (8. Obtain legal advice for cross-jurisdiction campaigns.) Tj
+T* () Tj
+T* (## 10\) References \(clickable\)) Tj
+T* (### Legislation / official regulators) Tj
+T* (- Commonwealth Electoral Act 1918 \(Federal Register\): https://www.legislation.gov.au/C1918A00027) Tj
+T* (- Electoral Legislation Amendment \(Electoral Reform\) Act 2025 \(Federal Register search entry\):) Tj
+T* (https://www.legislation.gov.au) Tj
 T* (- AEC funding and disclosure reform hub: https://www.aec.gov.au/FADReform/) Tj
-T* (- AEC changes explained: https://www.aec.gov.au/FADReform/factsheets/changes-explained.htm) Tj
+T* (- AEC changes explained fact sheet: https://www.aec.gov.au/FADReform/factsheets/changes-explained.htm) Tj
 T* (- AEC disclosure overview: https://www.aec.gov.au/FADReform/factsheets/disclosure-overview.htm) Tj
-T* (- AEC financial disclosure portal:) Tj
+T* (- AEC financial disclosure portal/info:) Tj
 T* (https://www.aec.gov.au/parties_and_representatives/financial_disclosure/) Tj
 T* () Tj
-T* (NSW) Tj
-T* (- Electoral Funding Act 2018 \(NSW\):) Tj
-T* (https://legislation.nsw.gov.au/view/html/inforce/current/act-2018-020) Tj
-T* (- NSWEC guidance: https://elections.nsw.gov.au/about-us/legislation/funding-) Tj
-T* (legislation/guidelines-under-the-electoral-funding-act-2018) Tj
+T* (- NSW Electoral Funding Act 2018: https://legislation.nsw.gov.au/view/html/inforce/current/act-2018-020) Tj
+T* (- NSWEC funding/disclosure guidance:) Tj
+T* (https://elections.nsw.gov.au/about-us/legislation/funding-legislation/guidelines-under-the-electoral-fund) Tj
+T* (ing-act-2018) Tj
 T* () Tj
-T* (Victoria) Tj
-T* (- Electoral Act 2002 \(Vic\): https://www.legislation.vic.gov.au/in-force/acts/electoral-act-2002) Tj
-T* (- VEC disclosures: https://www.vec.vic.gov.au/disclosures/) Tj
-T* () Tj
-T* (Queensland) Tj
-T* (- Electoral Act 1992 \(Qld\):) Tj
-T* (https://www.legislation.qld.gov.au/view/html/inforce/current/act-1992-028) Tj
-T* (- Local Government Electoral Act 2011 \(Qld\):) Tj
-T* (https://www.legislation.qld.gov.au/view/html/inforce/current/act-2011-031) Tj
-T* (- ECQ disclosure guidance: https://www.ecq.qld.gov.au/donations-and-expenditure-) Tj
-T* (disclosure/disclosure-of-political-donations-and-electoral-expenditure) Tj
-T* () Tj
-T* (Western Australia) Tj
-T* (- Electoral Act 1907 \(WA\):) Tj
-T* (https://www.legislation.wa.gov.au/legislation/statutes.nsf/main_mrtitle_308_homepage.html) Tj
-T* (- WAEC reform notes: https://www.elections.wa.gov.au/electoralamendments2023) Tj
-T* () Tj
-T* (South Australia) Tj
-T* (- Electoral Act 1985 \(SA\):) Tj
-T* (https://www.legislation.sa.gov.au/lz?path=%2Fc%2Fa%2Felectoral%20act%201985) Tj
-T* () Tj
-T* (Tasmania) Tj
-T* (- Electoral Disclosure and Funding Act 2023 \(Tas\):) Tj
-T* (https://www.legislation.tas.gov.au/view/html/inforce/current/act-2023-020) Tj
-T* () Tj
-T* (ACT) Tj
-T* (- Electoral Act 1992 \(ACT\): https://www.legislation.act.gov.au/a/1992-71) Tj
-T* () Tj
-T* (NT) Tj
-T* (- Electoral Act 2004 \(NT\): https://legislation.nt.gov.au/en/Legislation/ELECTORAL-ACT-2004) Tj
-T* (Page 5) Tj
+T* (- Victoria Electoral Act 2002: https://www.legislation.vic.gov.au/in-force/acts/electoral-act-2002) Tj
+T* (- VEC political donations disclosures: https://www.vec.vic.gov.au/disclosures/) Tj
 ET
 endstream
 endobj
 11 0 obj
-<< /Type /Page /Parent 14 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 10 0 R >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 13 0 R >> >> /Contents 12 0 R >>
 endobj
 12 0 obj
-<< /Length 833 >>
+<< /Length 2281 >>
 stream
-BT /F1 11 Tf 50 790 Td 14 TL
+BT /F1 10 Tf 50 820 Td 12 TL
 () Tj
-T* (Parliamentary/policy) Tj
-T* (- Parliamentary Library quick guide: https://www.aph.gov.au/About_Parliament/Parliamentary_depa) Tj
-T* (rtments/Parliamentary_Library/Research/Quick_Guides/2022-) Tj
-T* (23/ElectionFundingAndDisclosure2022Update) Tj
-T* (- JSCEM materials: https://www.aph.gov.au/Parliamentary_Business/Committees/Joint/Electoral_Mat) Tj
-T* (ters/Operationandimpact) Tj
+T* (- Queensland Electoral Act 1992:) Tj
+T* (https://www.legislation.qld.gov.au/view/html/inforce/current/act-1992-028) Tj
+T* (- Queensland Local Government Electoral Act 2011:) Tj
+T* (https://www.legislation.qld.gov.au/view/html/inforce/current/act-2011-031) Tj
+T* (- ECQ disclosure guidance:) Tj
+T* (https://www.ecq.qld.gov.au/donations-and-expenditure-disclosure/disclosure-of-political-donations-and-ele) Tj
+T* (ctoral-expenditure) Tj
 T* () Tj
+T* (- WA Electoral Act 1907:) Tj
+T* (https://www.legislation.wa.gov.au/legislation/statutes.nsf/main_mrtitle_308_homepage.html) Tj
+T* (- WAEC electoral amendments 2023: https://www.elections.wa.gov.au/electoralamendments2023) Tj
+T* (- WA funding/disclosure guidelines:) Tj
+T* (https://www.elections.wa.gov.au/sites/default/files/content/documents/Funding_and_Disclosure_Guidelines.p) Tj
+T* (df) Tj
 T* () Tj
+T* (- SA Electoral Act 1985: https://www.legislation.sa.gov.au/lz?path=%2Fc%2Fa%2Felectoral%20act%201985) Tj
+T* (- ECSA funding/disclosure guides: https://www.ecsa.sa.gov.au) Tj
 T* () Tj
+T* (- Tasmania Electoral Disclosure and Funding Act 2023:) Tj
+T* (https://www.legislation.tas.gov.au/view/html/inforce/current/act-2023-020) Tj
+T* (- TEC political donations page:) Tj
+T* (https://www.tec.tas.gov.au/disclosure-and-funding/political-donations/index.html) Tj
 T* () Tj
+T* (- ACT Electoral Act 1992: https://www.legislation.act.gov.au/a/1992-71) Tj
+T* (- Elections ACT funding/disclosure obligations:) Tj
+T* (https://www.elections.act.gov.au/funding-disclosures-and-registers/funding-and-disclosure-obligations) Tj
 T* () Tj
+T* (- NT Electoral Act 2004: https://legislation.nt.gov.au/en/Legislation/ELECTORAL-ACT-2004) Tj
+T* (- NTEC compliance/disclosure: https://ntec.nt.gov.au/financial-disclosure/compliance) Tj
 T* () Tj
+T* (### Parliamentary and policy references) Tj
+T* (- Parliamentary Library quick guide \(jurisdictional comparison\):) Tj
+T* (https://www.aph.gov.au/About_Parliament/Parliamentary_departments/Parliamentary_Library/Research/Quick_Gu) Tj
+T* (ides/2022-23/ElectionFundingAndDisclosure2022Update) Tj
+T* (- JSCEM review of 2018 Commonwealth reforms:) Tj
+T* (https://www.aph.gov.au/Parliamentary_Business/Committees/Joint/Electoral_Matters/Operationandimpact) Tj
 T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* () Tj
-T* (Page 6) Tj
 ET
 endstream
 endobj
 13 0 obj
-<< /Type /Page /Parent 14 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 12 0 R >>
-endobj
-14 0 obj
-<< /Type /Pages /Count 6 /Kids [ 3 0 R 5 0 R 7 0 R 9 0 R 11 0 R 13 0 R ] >>
-endobj
-15 0 obj
-<< /Type /Catalog /Pages 14 0 R >>
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 xref
-0 16
+0 14
 0000000000 65535 f 
 0000000009 00000 n 
-0000000079 00000 n 
-0000003797 00000 n 
-0000003924 00000 n 
-0000007534 00000 n 
-0000007661 00000 n 
-0000010805 00000 n 
-0000010932 00000 n 
-0000014578 00000 n 
-0000014705 00000 n 
-0000017544 00000 n 
-0000017673 00000 n 
-0000018558 00000 n 
-0000018687 00000 n 
-0000018779 00000 n 
+0000000058 00000 n 
+0000000142 00000 n 
+0000000269 00000 n 
+0000002990 00000 n 
+0000003117 00000 n 
+0000006225 00000 n 
+0000006352 00000 n 
+0000009478 00000 n 
+0000009606 00000 n 
+0000013004 00000 n 
+0000013133 00000 n 
+0000015467 00000 n 
 trailer
-<< /Size 16 /Root 15 0 R >>
+<< /Size 14 /Root 1 0 R >>
 startxref
-18830
+15538
 %%EOF
