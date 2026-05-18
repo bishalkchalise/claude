@@ -343,12 +343,85 @@ lg_summary <- bind_rows(
   e("id_col",  "जम्मा (row)", "(dropped)",  "Grand-total row at bottom of source")
 )
 
+# ----- राजस्व अनुदान (प्राप्ति) / Summary -------------------------------------
+set_ctx("Revenue Summary", "summary_{gross,net}_receipt.xlsx")
+revenue_summary <- bind_rows(
+  e("id_col",  "(file path)", "receipt_type",
+    "gross OR net -- gross = before refunds/adjustments, net = after"),
+  e("measure", "अनुमान",    "estimate",
+    "Estimated revenue (annual budget for receipts)"),
+  e("measure", "प्राप्ती",    "received",
+    "Actual revenue received"),
+  e("measure", "Receipts Percentage", "receipt_pct",
+    "Receipts as % of estimate"),
+  e("measure", "मौज्दात",    "balance",
+    "Remaining balance (estimate - received); negative if over-collected")
+)
+
+# ----- राजस्व अनुदान (प्राप्ति) / LG Revenue Heading -------------------------
+set_ctx("LG Revenue Heading", "lg_revenue_heading_{gross,net}_receipt.xlsx")
+lg_revenue_heading <- bind_rows(
+  e("id_col",  "(file path)", "receipt_type",
+    "gross OR net"),
+  e("id_col",  "प्रदेश",    "province", "Province filter from title row, if present"),
+  e("id_col",  "जिल्ला",   "district_filter", "District filter from title row, if present"),
+  e("id_col",  "राजस्व शीर्षक संकेत", "revenue_heading_code",
+    "5-digit revenue heading code (chart of accounts on revenue side)"),
+  e("id_col",  "राजस्व शीर्षक नाम", "revenue_heading_np",
+    "Revenue heading name in Nepali (e.g. 'भुमिकर/मालपोत' = Land tax)"),
+  e("measure", "अनुमान",   "estimate",    "Estimated revenue for this heading"),
+  e("measure", "प्राप्ती",   "received",    "Actual revenue received for this heading"),
+  e("measure", "Receipts Percentage", "receipt_pct", "Receipts as % of estimate"),
+  e("measure", "मौज्दात",   "balance",     "Remaining balance")
+)
+
+# ----- राजस्व अनुदान (प्राप्ति) / LG Revenue Monthly -------------------------
+set_ctx("LG Revenue Monthly", "lg_revenue_monthly_{gross,net}_receipt.xlsx")
+lg_revenue_monthly <- bind_rows(
+  e("id_col",  "(file path)", "receipt_type", "gross OR net"),
+  e("id_col",  "प्रदेश",    "province", "Province filter from title row"),
+  e("id_col",  "जिल्ला",   "district_filter", "District filter from title row"),
+  e("id_col",  "स्रोत",   "source_np",
+    "Funding source (kept as Nepali because values mix federal, specific provinces, internal source)"),
+  e("id_col",  "राजस्व शीर्षक संकेत", "revenue_heading_code", "5-digit revenue heading code"),
+  e("id_col",  "राजस्व शीर्षक नाम", "revenue_heading_np", "Revenue heading name in Nepali"),
+  e("month",   "साउन",   "received_saun",    "Received in Saun (month 1, ~mid-Jul to mid-Aug)"),
+  e("month",   "भदौ",    "received_bhadau",  "Received in Bhadau (month 2)"),
+  e("month",   "आस्बिन", "received_asoj",    "Received in Asoj (month 3)"),
+  e("month",   "कार्तिक", "received_kartik",  "Received in Kartik (month 4)"),
+  e("month",   "मार्ग",   "received_mangsir", "Received in Mangsir (month 5)"),
+  e("month",   "पौष",   "received_poush",   "Received in Poush (month 6)"),
+  e("month",   "माघ",   "received_magh",    "Received in Magh (month 7)"),
+  e("month",   "फागुन",  "received_falgun",  "Received in Falgun (month 8)"),
+  e("month",   "चैत्र",   "received_chaitra", "Received in Chaitra (month 9)"),
+  e("month",   "बैशाख",  "received_baisakh", "Received in Baisakh (month 10)"),
+  e("month",   "जेठ",   "received_jestha",  "Received in Jestha (month 11)"),
+  e("month",   "असार",  "received_asar",    "Received in Asar (month 12)"),
+  e("id_col",  "जम्मा (col)", "(dropped)", "Per-row monthly total column at end")
+)
+
+# ----- राजस्व अनुदान (प्राप्ति) / Revenue Sharing by GoN ---------------------
+set_ctx("Revenue Sharing by GoN", "revenue_sharing_{gross,net}_receipt.xlsx")
+revenue_sharing <- bind_rows(
+  e("id_col",  "(file path)", "receipt_type", "gross OR net"),
+  e("id_col",  "प्रदेश",    "province", "Province filter from title row"),
+  e("id_col",  "जिल्ला",   "district_filter", "District filter from title row"),
+  e("id_col",  "(revenue heading code)", "revenue_heading_code",
+    paste("5-digit revenue heading code, detected from row 6 columns.",
+          "Typical codes: 11411 (VAT), 11421 (Excise), 14153-14158 (various",
+          "sharable revenue lines). Pivoted to long format.")),
+  e("measure", "(amount per code)", "shared_amount",
+    "Amount shared from this revenue heading by Govt of Nepal to the LG"),
+  e("id_col",  "जम्मा (col)", "(dropped)", "Per-row total column at end")
+)
+
 # ----- combine ---------------------------------------------------------------
 codebook <- bind_rows(
   sector_lg, sector_fund_type, sector_monthly_exp, sector_source, sector_trimester,
   projection_summary, projection_source_fund_type,
   lg_line_item,
-  lg_kosh, lg_summary
+  lg_kosh, lg_summary,
+  revenue_summary, lg_revenue_heading, lg_revenue_monthly, revenue_sharing
 )
 
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR, recursive = TRUE)
