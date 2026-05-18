@@ -262,10 +262,42 @@ projection_source_fund_type <- bind_rows(
   e("id_col",  "जम्मा (row)","(dropped)", "Grand-total row at bottom of source")
 )
 
+# ----- खर्च शीर्षक अनुसार बजेट तथा खर्च / LG Line Item -----------------------
+# One output file per FY: lg_line_item_fy207677.xlsx ... lg_line_item_fy208182.xlsx
+# (all 6 share the same column schema)
+set_ctx("LG Line Item", "lg_line_item_fy<YYYY>.xlsx")
+lg_line_item <- bind_rows(
+  e("id_col", "(parsed from R4C1)", "fy",
+    "Nepali fiscal year (YYYY/YY) parsed from the title row"),
+  e("id_col", "प्रदेश",     "province",
+    "Province name parsed from the title row (files are partitioned by province + district)"),
+  e("id_col", "जिल्ला",    "district_filter",
+    "District name parsed from the title row (the district that this source file represents)"),
+  e("id_col", "संकेत",     "lg_code_raw",   "8-digit LG code from source"),
+  e("id_col", "स्थानीय तह नाम", "lg_name_np",
+    "Full LG name; split into mun_np + district_np"),
+  e("id_col", "क्र.सं.",   "(dropped)",     "Serial number"),
+  e("id_col", "जम्मा (row)", "(dropped)",   "Grand-total row at bottom of source"),
+  e("id_col", "जम्मा (col block)", "(dropped)",
+    "Grand-total column block at right of source"),
+  e("fund_type", "चालु",   "current",
+    "Current (recurrent) expenditure line items -- codes typically start with 2xxxx"),
+  e("fund_type", "पूंजीगत",  "capital",
+    "Capital expenditure line items -- codes typically start with 3xxxx"),
+  e("measure",   "बजेट",   "bud",   "Budget for the line item"),
+  e("measure",   "खर्च",   "exp",   "Expenditure for the line item"),
+  e("id_col", "(line item code)", "line_item",
+    paste("Government chart-of-accounts code (e.g. 21111 = compensation",
+          "of employees, 22xxx = goods & services, 31xxx = fixed capital,",
+          "etc.). The data is LONG-format: one row per (LG, line item).",
+          "First digit indicates fund type (see fund_type col)."))
+)
+
 # ----- combine ---------------------------------------------------------------
 codebook <- bind_rows(
   sector_lg, sector_fund_type, sector_monthly_exp, sector_source, sector_trimester,
-  projection_summary, projection_source_fund_type
+  projection_summary, projection_source_fund_type,
+  lg_line_item
 )
 
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR, recursive = TRUE)
