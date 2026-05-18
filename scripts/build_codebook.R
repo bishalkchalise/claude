@@ -415,13 +415,119 @@ revenue_sharing <- bind_rows(
   e("id_col",  "जम्मा (col)", "(dropped)", "Per-row total column at end")
 )
 
+# ----- राजस्व अनुमान / revenue_estimate ------------------------------------
+set_ctx("Revenue Estimate", "revenue_estimate.xlsx")
+revenue_estimate <- bind_rows(
+  e("source",   "संघीय सरकार",    "fed_*",
+    "Federal Government grants: equalization / conditional / special / complementary / other_grant"),
+  e("source",   "प्रदेश सरकार",     "prov_*",
+    "Provincial Government grants: same 5 grant subtypes as federal"),
+  e("source",   "अन्तर स्थानीय तह","inter_lg",
+    "Inter-LG transfers (between local governments)"),
+  e("source",   "वैदेशिक स्रोत",     "foreign_src",
+    "Foreign source income (external aid / financing)"),
+  e("source",   "राजस्व बाँडफाँट",  "revshare_{fed,prov}",
+    "Revenue sharing income: fed = from federal, prov = from province"),
+  e("source",   "आन्तरिक श्रोत",    "internal_*",
+    "Internal sources: delegated_tax / existing_rights / other / public (community contrib.)"),
+  e("source",   "ऋण",            "loan",
+    "Loan used to cover budget shortfall"),
+  e("source",   "नगद मौज्दात",    "cash_balance",
+    "Cash balance used to cover budget shortfall"),
+  e("measure",  "समानिकरण अनुदान","equalization",
+    "Equalization Grant — unconditional fiscal transfer to LGs based on a formula"),
+  e("measure",  "सशर्त अनुदान",   "conditional",
+    "Conditional Grant — must be spent on a specified purpose"),
+  e("measure",  "विषेश अनुदान",   "special",
+    "Special Grant — for specific projects / disasters / priorities"),
+  e("measure",  "समपुरक अनुदान", "complementary",
+    "Complementary / Matching Grant — requires LG counterpart funding"),
+  e("measure",  "अन्य अनुदान",   "other_grant",     "Other grants"),
+  e("measure",  "प्रत्यायोजित कराधिकार","delegated_tax",
+    "Delegated taxation authority — taxes LG is empowered to collect"),
+  e("measure",  "विद्यमान अधिकार","existing_rights",
+    "Existing rights — established LG revenue authorities"),
+  e("measure",  "जन सहभागिता","public",
+    "Public participation — community contributions"),
+  e("id_col",   "कुल आय अनुमान","(dropped)",
+    "Total income projection (sum of all sources -- dropped per no-totals rule)"),
+  e("id_col",   "जम्मा (row)",   "(dropped)", "Grand-total row at bottom of source")
+)
+
+# ----- लक्षित समूह / LG Target Group ----------------------------------------
+set_ctx("LG Target Group", "lg_target_group.xlsx")
+lg_target_group <- bind_rows(
+  e("target_group", "अपाङ्ग",            "disabled",       "Persons with disabilities"),
+  e("target_group", "अन्य",              "other",          "Other / unspecified target group"),
+  e("target_group", "जेष्ठ नागरिक",      "senior_citizen", "Senior citizens / elderly"),
+  e("target_group", "आदिवासी /जनजाती","indigenous",
+    "Indigenous peoples / janajati (ethnic minority groups)"),
+  e("target_group", "मधेसी",            "madhesi",
+    "Madhesi (Terai-region community)"),
+  e("target_group", "दलित",             "dalit",
+    "Dalit (historically marginalized caste community)"),
+  e("target_group", "सीमान्तकृत",        "marginalized", "Marginalized communities"),
+  e("target_group", "महिला",            "women",        "Women"),
+  e("target_group", "बालबालिका",       "children",     "Children"),
+  e("measure",      "बजेट", "<tg>_bud", "Budget allocation for the target group"),
+  e("measure",      "खर्च", "<tg>_exp", "Expenditure for the target group"),
+  e("id_col",       "संकेत (11-digit)", "lg_code_raw",
+    "11-digit code = 8-digit LG code + 3-digit target-group suffix"),
+  e("id_col",       "(first 8 digits)", "lg_code_8",
+    "First 8 digits of the raw code — used to join with the lookup"),
+  e("id_col",       "जम्मा (col)", "(dropped)", "Grand-total budget+expense pair at end of source"),
+  e("id_col",       "जम्मा (row)", "(dropped)", "Grand-total row")
+)
+
+# ----- लक्षित समूह / Trimester Target Group ----------------------------------
+set_ctx("Trimester Target Group", "trimester_target_group.xlsx")
+trimester_tg <- bind_rows(
+  e("id_col",       "संकेत", "target_group_code", "3-digit target group code (100-108)"),
+  e("id_col",       "नाम", "target_group_np",
+    "Target group name in Nepali"),
+  e("id_col",       "(mapped)", "target_group",
+    "Short English label: women/children/dalit/madhesi/disabled/etc."),
+  e("trimester",    "प्रथम चौमासिक",  "t1", "1st Trimester (months 1-4)"),
+  e("trimester",    "दोश्रो चौमासिक", "t2", "2nd Trimester (months 5-8)"),
+  e("trimester",    "तेस्रो चौमासिक",  "t3", "3rd Trimester (months 9-12)"),
+  e("measure",      "बजेट", "<t#>_bud", "Trimester budget"),
+  e("measure",      "खर्च", "<t#>_exp", "Trimester expenditure"),
+  e("measure",      "खर्च(%)", "exp_pct", "Expenditure as % of budget"),
+  e("measure",      "मौज्दात", "balance", "Closing balance"),
+  e("id_col",       "(NA row)", "(dropped)",
+    "Leading aggregate row with NA target group code (sum across all groups)"),
+  e("id_col",       "कुल जम्मा", "(dropped)", "Grand-total row")
+)
+
+# ----- विभाज्य कोष / Divisible Fund ----------------------------------------
+set_ctx("Divisible Fund", "divisible_fund.xlsx")
+divisible_fund <- bind_rows(
+  e("id_col",  "राजस्व शीर्षक संकेत", "revenue_heading_code",
+    "5-digit revenue heading code (chart of accounts)"),
+  e("id_col",  "राजस्व शीर्षक शीर्षक", "revenue_heading_np",
+    "Revenue heading name in Nepali"),
+  e("measure", "शुरुको मौज्दात", "opening_balance", "Opening balance of the divisible fund"),
+  e("measure", "प्राप्त",       "received",        "Revenue received during the year"),
+  e("measure", "जम्मा प्राप्ती",  "total_receipts",  "Total receipts (opening + received)"),
+  e("measure", "नेपाल सरकार",  "dist_fed",        "Amount distributed to Federal Government"),
+  e("measure", "प्रदेश सरकार",   "dist_prov",       "Amount distributed to Provincial Government"),
+  e("measure", "स्थानीय तह",    "dist_lg",
+    "Amount distributed to / retained by the Local Government"),
+  e("measure", "Total Distibution", "dist_total",
+    "Sum of distributions (sic: source spells 'Distibution')"),
+  e("measure", "Distibution Percentage", "dist_pct", "Distributed as % of receipts"),
+  e("measure", "मौज्दात",       "closing_balance", "Closing balance"),
+  e("id_col",  "जम्मा (row)",   "(dropped)",       "Grand-total row")
+)
+
 # ----- combine ---------------------------------------------------------------
 codebook <- bind_rows(
   sector_lg, sector_fund_type, sector_monthly_exp, sector_source, sector_trimester,
   projection_summary, projection_source_fund_type,
   lg_line_item,
   lg_kosh, lg_summary,
-  revenue_summary, lg_revenue_heading, lg_revenue_monthly, revenue_sharing
+  revenue_summary, lg_revenue_heading, lg_revenue_monthly, revenue_sharing,
+  revenue_estimate, lg_target_group, trimester_tg, divisible_fund
 )
 
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR, recursive = TRUE)
