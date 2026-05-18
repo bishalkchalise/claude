@@ -71,11 +71,10 @@ clean_one <- function(file, lookup) {
     lg_code_raw = codes[lg_rows],
     lg_name_np  = names_v[lg_rows]
   )
-  parts <- str_split_fixed(id_df$lg_name_np, ",", 2)
-  id_df$mun_np      <- str_squish(parts[, 1])
-  id_df$district_np <- str_squish(parts[, 2])
-  if (!is.null(lookup)) id_df <- id_df %>% left_join(lookup, by = c("district_np","mun_np"))
-  else id_df$lgcode <- NA_character_
+  .splt <- split_lg_name(id_df$lg_name_np)
+  id_df$mun_np      <- .splt$mun_np
+  id_df$district_np <- .splt$district_np
+  id_df <- attach_lgcode(id_df, lookup)
 
   cur_block <- extract_block(raw, ranges$chalu, "current", lg_rows)
   cap_block <- extract_block(raw, ranges$punji, "capital", lg_rows)

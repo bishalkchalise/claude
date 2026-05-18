@@ -79,12 +79,11 @@ clean_one <- function(file, lookup, receipt_type) {
   df <- df[keep, , drop = FALSE]
   if (!nrow(df)) stop("no valid rows")
 
-  parts <- str_split_fixed(df$lg_name_np, ",", 2)
-  df$mun_np      <- str_squish(parts[, 1])
-  df$district_np <- str_squish(parts[, 2])
+  .splt <- split_lg_name(df$lg_name_np)
+  df$mun_np      <- .splt$mun_np
+  df$district_np <- .splt$district_np
 
-  if (!is.null(lookup)) df <- df %>% left_join(lookup, by = c("district_np","mun_np"))
-  else df$lgcode <- NA_character_
+  df <- attach_lgcode(df, lookup)
 
   df$fy <- meta$fy
   df$province <- meta$province

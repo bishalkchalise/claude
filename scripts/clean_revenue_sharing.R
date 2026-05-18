@@ -63,11 +63,10 @@ clean_one <- function(file, lookup, receipt_type) {
   df <- df[keep, , drop = FALSE]
   if (!nrow(df)) return(empty_result())
 
-  parts <- str_split_fixed(df$lg_name_np, ",", 2)
-  df$mun_np      <- str_squish(parts[, 1])
-  df$district_np <- str_squish(parts[, 2])
-  if (!is.null(lookup)) df <- df %>% left_join(lookup, by = c("district_np","mun_np"))
-  else df$lgcode <- NA_character_
+  .splt <- split_lg_name(df$lg_name_np)
+  df$mun_np      <- .splt$mun_np
+  df$district_np <- .splt$district_np
+  df <- attach_lgcode(df, lookup)
 
   long <- df %>%
     pivot_longer(cols = all_of(names(heading_cols)),

@@ -54,6 +54,23 @@ parse_title <- function(s) {
        province = prov, district_filter = dist)
 }
 
+# Split a "<mun>, <district>" full LG name into a tibble (mun_np, district_np).
+# Robust to:
+#   - multi-comma names ("<mun>...कार्यालय, <area>, <district>")  -- take last
+#     comma chunk as district, everything before as mun (then strip cruft).
+#   - trailing "नगर कार्यपालिकाको कार्यालय" / "गाउँ कार्यपालिकाको कार्यालय" suffix on mun.
+split_lg_name <- function(lg_name_np) {
+  s <- as.character(lg_name_np)
+  has_comma <- !is.na(s) & grepl(",", s, fixed = TRUE)
+  mun  <- ifelse(has_comma, sub(",[^,]*$", "", s), NA_character_)
+  dist <- ifelse(has_comma, sub("^.*,([^,]*)$", "\\1", s), NA_character_)
+  # Strip trailing कार्यालय cruft from mun
+  mun <- str_replace(mun,
+    "\\s*(नगर|गाउँ|गाउं|उप-?महानगर|महानगर)?\\s*कार्यपालिकाको\\s*कार्यालय.*$", "")
+  tibble(mun_np = str_squish(mun),
+         district_np = str_squish(dist))
+}
+
 # Forward-fill a character vector (NA / "" replaced by last non-empty).
 ffill <- function(v) {
   v <- as.character(v)
@@ -67,6 +84,9 @@ ffill <- function(v) {
 # Normalize a Nepali name for fuzzy matching (strip suffixes, whitespace).
 normalize_np <- function(x) {
   x <- as.character(x)
+  # Strip parenthetical content, "<...kayalaya>" tails, then punctuation.
+  x <- str_replace_all(x, "\\([^)]*\\)", " ")
+  x <- str_replace_all(x, "\\s*(नगर|गाउँ|गाउं|उप-?महानगर|महानगर)?\\s*कार्यपालिकाको\\s*कार्यालय\\s*", " ")
   x <- str_replace_all(x, "[\\.,()\\-]", " ")
   x <- str_replace_all(x, "\\s+", " ")
   x <- str_trim(x)
@@ -92,10 +112,94 @@ load_lookup <- function(path) {
   miss <- setdiff(needed, names(lk))
   if (length(miss)) stop("Lookup missing columns: ", paste(miss, collapse = ", "))
   lk %>%
-    transmute(district_np = str_squish(district_np),
-              mun_np      = str_squish(mun_np),
-              lgcode      = as.character(lgcode)) %>%
-    distinct(district_np, mun_np, .keep_all = TRUE)
+    transmute(district_np  = str_squish(district_np),
+              mun_np       = str_squish(mun_np),
+              district_key = normalize_np(district_np),
+              mun_key      = normalize_np(mun_np),
+              lgcode       = as.character(lgcode)) %>%
+    distinct(district_key, mun_key, .keep_all = TRUE)
+}
+
+# attach_lgcode(df, lookup, write_unmatched=NULL)
+#
+# Drop-in replacement for `left_join(lookup, by = c("district_np","mun_np"))`.
+# Strategy:
+#   (1) try exact join on raw (district_np, mun_np)
+#   (2) for misses, try normalized-key join (suffixes / whitespace stripped)
+#   (3) for STILL-missing, fuzzy-match within the same district using
+#       stringdist (OSA, max distance 2). Requires `stringdist` to be
+#       installed; if not present, step (3) is skipped.
+# Returns df with an added `lgcode` character column.
+# If `write_unmatched` is a path, writes a CSV of remaining unmatched
+# (district_np, mun_np) pairs there for manual reconciliation.
+
+attach_lgcode <- function(df, lookup, write_unmatched = NULL) {
+  if (is.null(lookup) || !nrow(lookup)) {
+    df$lgcode <- NA_character_
+    return(df)
+  }
+  has_sd <- requireNamespace("stringdist", quietly = TRUE)
+
+  # --- (1) exact join ----------------------------------------------------
+  lk_exact <- lookup %>% select(district_np, mun_np, lgcode)
+  df <- df %>% left_join(lk_exact, by = c("district_np", "mun_np"))
+
+  # --- (2) normalized-key join for misses --------------------------------
+  miss_idx <- which(is.na(df$lgcode))
+  if (length(miss_idx)) {
+    dk <- normalize_np(df$district_np[miss_idx])
+    mk <- normalize_np(df$mun_np[miss_idx])
+    tmp <- tibble(.row = miss_idx, district_key = dk, mun_key = mk) %>%
+      left_join(lookup %>% select(district_key, mun_key, lgcode2 = lgcode),
+                by = c("district_key", "mun_key"))
+    df$lgcode[tmp$.row[!is.na(tmp$lgcode2)]] <-
+      tmp$lgcode2[!is.na(tmp$lgcode2)]
+  }
+
+  # --- (3) fuzzy fallback ------------------------------------------------
+  # First try within the same (normalized) district. If that fails (district
+  # itself is spelt differently), match on combined district+mun across the
+  # whole lookup with a tighter distance threshold.
+  if (has_sd) {
+    miss_idx <- which(is.na(df$lgcode))
+    if (length(miss_idx)) {
+      dk_all <- normalize_np(df$district_np[miss_idx])
+      mk_all <- normalize_np(df$mun_np[miss_idx])
+      lk_combined <- paste(lookup$district_key, lookup$mun_key)
+
+      for (i in seq_along(miss_idx)) {
+        # Pass A: same district, fuzzy on mun (max edit distance 2)
+        cand <- lookup %>% filter(district_key == dk_all[i])
+        if (nrow(cand)) {
+          dists <- stringdist::stringdist(mk_all[i], cand$mun_key, method = "osa")
+          if (min(dists) <= 2) {
+            df$lgcode[miss_idx[i]] <- cand$lgcode[which.min(dists)]
+            next
+          }
+        }
+        # Pass B: full lookup, fuzzy on combined district+mun, max 3
+        combined <- paste(dk_all[i], mk_all[i])
+        dists <- stringdist::stringdist(combined, lk_combined, method = "osa")
+        if (min(dists) <= 3) {
+          df$lgcode[miss_idx[i]] <- lookup$lgcode[which.min(dists)]
+        }
+      }
+    }
+  }
+
+  # --- write unmatched report (optional) ---------------------------------
+  if (!is.null(write_unmatched)) {
+    um <- df %>%
+      filter(is.na(lgcode)) %>%
+      distinct(district_np, mun_np)
+    if (nrow(um)) {
+      um$district_key <- normalize_np(um$district_np)
+      um$mun_key      <- normalize_np(um$mun_np)
+      write.csv(um, write_unmatched, row.names = FALSE, fileEncoding = "UTF-8")
+    }
+  }
+
+  df
 }
 
 # ----- File-level error wrapper ---------------------------------------------
