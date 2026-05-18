@@ -30,19 +30,14 @@ suppressPackageStartupMessages({
 
 # ----- CONFIG ----------------------------------------------------------------
 
-# Scan EVERY xlsx under these folders (recursive). Add/remove as needed.
-SCAN_DIRS <- c(
-  "क्षेत्रगत बजेट तथा खर्च",
-  "बजेट र खर्चको सारांश",
-  "खर्च शीर्षक अनुसार बजेट तथा खर्च",
-  "व्यय अनुमान",
-  "लक्षित समूह अनुसार बजेट तथा खर्च",
-  "स्थानीय तह अनुसार बजेट र खर्चको सारांश",
-  "स्थानीय तह अनुसार श्रोतगत बजेट तथा खर्च",
-  "स्थानीय तह अनुसार Budget estimates and expense reports",
-  "स्थानीय तह अनुसार Revenue projection and receipts",
-  "स्थानीय तह अनुसार Sectoral budget and expenditure"
+# By default, scan EVERY top-level folder in the working directory
+# (excluding scripts/, lookup/, cleaned_output/, docs/, .git, etc.).
+# Override SCAN_DIRS below if you want to be specific.
+SCAN_DIRS <- setdiff(
+  list.dirs(".", recursive = FALSE),
+  c("./scripts", "./lookup", "./cleaned_output", "./docs", "./.git")
 )
+SCAN_DIRS <- SCAN_DIRS[!grepl("^\\.\\./|^\\./\\.[a-zA-Z]", SCAN_DIRS)]
 
 # Your existing lookup. Set the path and the column names below.
 EXISTING_LOOKUP <- "lookup/lg_lookup_master.xlsx"
@@ -82,26 +77,63 @@ fuzzy_match <- function(name, candidates, max_dist = 2) {
   if (min(d) <= max_dist) which.min(d) else NA_integer_
 }
 
-# Try a few skip-row counts and pick the one that yields the most rows whose
-# value in NAME_COL_DEFAULT contains a comma (the "mun, district" pattern).
+# Scan a file looking for any column whose values match the
+# "<mun_name>, <district>" pattern. Tries multiple skip-row counts and
+# picks whichever (skip, column) combination yields the most parseable
+# rows. Also requires a sibling column with an 8-digit code so we don't
+# mis-pick a totally unrelated comma-bearing column.
 extract_names_from_file <- function(file) {
-  best <- list(n = 0L, df = NULL)
-  for (sk in SKIP_CANDIDATES) {
-    df <- tryCatch(
-      suppressMessages(read_excel(file, skip = sk, col_names = FALSE,
-                                  .name_repair = "minimal")),
-      error = function(e) NULL
-    )
-    if (is.null(df) || ncol(df) < NAME_COL_DEFAULT) next
-    v <- as.character(df[[NAME_COL_DEFAULT]])
-    ok <- !is.na(v) & grepl(",", v)
-    if (sum(ok) > best$n) best <- list(n = sum(ok), df = df[ok, , drop = FALSE])
-  }
-  if (best$n == 0) {
-    message("  skip (no parseable rows): ", basename(file))
+  # Read the whole sheet once, then slice within R
+  raw <- tryCatch(
+    suppressMessages(read_excel(file, col_names = FALSE,
+                                .name_repair = "minimal")),
+    error = function(e) NULL
+  )
+  if (is.null(raw) || nrow(raw) < 8 || ncol(raw) < 3) {
+    message("  skip (unreadable or too small): ", basename(file))
     return(NULL)
   }
-  parts <- str_split_fixed(as.character(best$df[[NAME_COL_DEFAULT]]), ",", 2)
+
+  best <- list(n = 0L, df = NULL)
+  for (sk in SKIP_CANDIDATES) {
+    if (sk >= nrow(raw)) next
+    body <- raw[(sk + 1):nrow(raw), , drop = FALSE]
+    for (col_name in seq_len(ncol(body))) {
+      v <- as.character(body[[col_name]])
+      ok <- !is.na(v) & grepl(",", v, fixed = TRUE)
+      n_ok <- sum(ok)
+      if (n_ok < 2 || n_ok <= best$n) next
+      # Heuristic: require that the row is "LG-like" -- some neighboring
+      # column (within ±2) on the same row should contain a numeric code
+      # with 6+ digits (the LG code or similar). Without this we'd pick
+      # up rev-heading description columns etc.
+      look_cols <- intersect((col_name - 2):(col_name + 2), seq_len(ncol(body)))
+      look_cols <- setdiff(look_cols, col_name)
+      has_code <- rep(FALSE, length(v))
+      for (cc in look_cols) {
+        cand <- as.character(body[[cc]])
+        cand <- gsub("[०१२३४५६७८९]", "X", cand)  # mask devanagari digits
+        # Restore: simpler -- just check if any digit-like 6-10 char string
+        cand_raw <- as.character(body[[cc]])
+        for (i in 0:9) cand_raw <- gsub(c("०","१","२","३","४","५","६","७","८","९")[i+1],
+                                        as.character(i), cand_raw, fixed = TRUE)
+        cand_clean <- gsub("[[:space:],]", "", cand_raw)
+        has_code <- has_code | grepl("^[0-9]{6,12}$", cand_clean)
+      }
+      ok <- ok & has_code
+      n_ok <- sum(ok)
+      if (n_ok > best$n) {
+        best <- list(n = n_ok, df = body[ok, col_name, drop = FALSE])
+        names(best$df) <- "name_raw"
+      }
+    }
+  }
+
+  if (best$n == 0) {
+    message("  skip (no LG-name columns detected): ", basename(file))
+    return(NULL)
+  }
+  parts <- str_split_fixed(best$df$name_raw, ",", 2)
   tibble(
     mun_np      = str_squish(parts[, 1]),
     district_np = str_squish(parts[, 2]),
