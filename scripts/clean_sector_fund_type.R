@@ -1,195 +1,103 @@
 # =============================================================================
 # Clean: क्षेत्रगत बजेट तथा खर्च / Sector Fund Type
 #
-# Structure (locked spec):
-#   - rows 1-4 : title metadata (R4C1 = fiscal year)
-#   - rows 5-6 : 2-level header (fund type > budget/expense)
-#   - rows 7..n-1 : data (sector rollups + subsectors interleaved)
-#   - row n    : कुल जम्मा (grand total) -- DROP
-#   - cols     : sn | शीर्षक | चालु(bud,exp) | पूँजीगत(bud,exp) | वित्तीय(bud,exp)
-#               | जम्मा(bud,exp) | खर्च(%) | मौज्दात
-#
-# This is a NATIONAL rollup, NOT per-LG. No lgcode join.
-#
-# Sector rollup rows are dropped (first occurrence of each sector name).
-# Output: one row per (sector, subsector). Expected 43 rows per file.
+# National rollup. Drops sector rollup rows + grand-total row.
+# Output: one row per (sector, subsector) × fund type measure.
 # =============================================================================
 
-suppressWarnings(Sys.setlocale("LC_ALL", "C.UTF-8"))
-suppressPackageStartupMessages({
-  library(readxl)
-  library(writexl)
-  library(dplyr)
-  library(stringr)
-  library(purrr)
-})
+source("scripts/_helpers.R")
 
-# ----- CONFIG ----------------------------------------------------------------
 INPUT_DIR   <- "क्षेत्रगत बजेट तथा खर्च/Sector Fund Type"
 OUTPUT_DIR  <- "cleaned_output"
 OUTPUT_FILE <- "sector_fund_type.xlsx"
 
-# Sector + subsector translations (same as clean_sector_lg.R; if those grow,
-# centralize later. For now duplicated to keep each script self-contained.)
-SECTOR_PREFIX <- c(
-  "आर्थिक विकास"                          = "econ",
-  "सामाजिक विकास"                         = "social",
-  "पूर्वाधार विकास"                          = "infra",
-  "सुशासन तथा अन्तरसम्बन्धित क्षेत्र"            = "gov",
-  "कार्यालय सञ्चालन तथा प्रशासनिक"          = "admin"
-)
-
-SUBSECTOR_LABEL <- c(
-  "नभएको" = "none", "आपूर्ति" = "supply", "उद्योग" = "industry",
-  "कृषि" = "agri", "जलश्रोत तथा सिंचाई" = "water_irrig", "पर्यटन" = "tourism",
-  "पशुपन्छी विकास" = "livestock", "बन" = "forest", "भूमि व्यवस्था" = "land",
-  "वाणिज्य" = "commerce", "वित्तीय क्षेत्र" = "finance",
-  "सहकारी" = "coop", "खानेपानी तथा सरसफाई" = "wash",
-  "जनसंख्या तथा बसाईसराई" = "pop_migration", "भाषा तथा संस्कृति" = "lang_culture",
-  "युवा तथा खेलकुद" = "youth_sports",
-  "लैंगिक समानता तथा सामाजिक समावेशीकरण" = "gesi",
-  "शिक्षा" = "edu", "स्वास्थ्य" = "health",
-  "सामाजिक सुरक्षा तथा संरक्षण" = "social_protection", "उर्जा" = "energy",
-  "पुननिर्माण" = "reconstruction", "बिज्ञान तथा प्रबिधि" = "sci_tech",
-  "भवन, आवास तथा सहरी विकास" = "housing_urban", "यातयात पूर्वाधार" = "transport",
-  "संचार तथा सूचना प्रबिधि" = "ict",
-  "सम्पदा पूर्वाधार" = "heritage", "अनुगमन तथा मूल्यांकन" = "me_eval",
-  "कानुन तथा न्याय" = "law_justice", "गरिबी निवारण" = "poverty",
-  "तथ्यांक प्रणाली" = "stats", "परराष्ट्र" = "foreign",
-  "प्रशासकीय सुशासन" = "pub_admin", "मानब संशाधन विकास" = "hrd",
-  "योजना तर्जुमा र कार्यन्वयन" = "planning", "वातावरण तथा जलवायु" = "env_climate",
-  "वित्तीय सुशासन" = "fin_gov", "विपद व्यवस्थापन" = "disaster",
-  "श्रम तथा रोजगारी" = "labor", "शान्ति तथा सुव्यवस्था" = "peace",
-  "शासन प्रणाली" = "governance",
-  "कार्यालय सञ्चालन तथा प्रशासनिक" = "ops"
-)
-
-# ----- HELPERS ---------------------------------------------------------------
-
-np_digits_to_ascii <- function(x) {
-  x <- as.character(x)
-  np <- c("०","१","२","३","४","५","६","७","८","९")
-  for (i in 0:9) x <- gsub(np[i+1], as.character(i), x, fixed = TRUE)
-  x
-}
-
-parse_np_num <- function(x) {
-  if (is.numeric(x)) return(x)
-  x <- np_digits_to_ascii(x)
-  neg <- grepl("^\\s*\\(.*\\)\\s*$", x)
-  x <- gsub("[(),\\s]", "", x, perl = TRUE)
-  v <- suppressWarnings(as.numeric(x))
-  v[neg] <- -v[neg]
-  v
-}
-
-extract_fy <- function(title_cell) {
-  s <- np_digits_to_ascii(as.character(title_cell))
-  m <- regmatches(s, regexpr("\\d{4}/\\d{2}", s))
-  if (length(m) == 0) NA_character_ else m
-}
-
-# ----- CLEAN ONE FILE --------------------------------------------------------
+# Expected fund types and trailing measures. The script also tolerates
+# extra columns and missing ones by detecting positions from row 5.
+FUND_TYPE_LABEL <- c("चालु" = "current", "पूँजीगत" = "capital",
+                     "वित्तीय" = "financing", "जम्मा" = "total")
+TRAIL_LABEL <- c("खर्च(%)" = "exp_pct", "मौज्दात" = "balance")
 
 clean_one <- function(file) {
   message("Reading: ", basename(file))
-
   raw <- suppressMessages(read_excel(file, col_names = FALSE,
                                      .name_repair = "minimal"))
-  stopifnot(nrow(raw) >= 7, ncol(raw) >= 12)
-
+  if (nrow(raw) < 7 || ncol(raw) < 4) stop("file too small")
   fy <- extract_fy(raw[[4, 1]])
 
-  # Parse numeric value cols (C3..C12)
-  vals <- as.data.frame(lapply(raw[, 3:12], parse_np_num))
-  names(vals) <- c("current_bud", "current_exp",
-                   "capital_bud", "capital_exp",
-                   "financing_bud", "financing_exp",
-                   "total_bud", "total_exp",
-                   "exp_pct", "balance")
+  r5 <- as.character(unlist(raw[5, ]))
+  r6 <- as.character(unlist(raw[6, ]))
 
-  # Build a tidy frame starting from row 7
+  # Detect fund-type pairs in row 5 and trailing single columns
+  ft_cols  <- list()
+  for (nm in names(FUND_TYPE_LABEL)) {
+    pos <- which(r5 == nm)
+    if (length(pos)) ft_cols[[FUND_TYPE_LABEL[[nm]]]] <- pos[1]
+  }
+  trail_cols <- list()
+  for (nm in names(TRAIL_LABEL)) {
+    pos <- which(r5 == nm)
+    if (length(pos)) trail_cols[[TRAIL_LABEL[[nm]]]] <- pos[1]
+  }
+  if (!length(ft_cols)) stop("no fund-type headers found in row 5")
+
+  val_pairs <- list()
+  for (lbl in names(ft_cols)) {
+    c <- ft_cols[[lbl]]
+    if (r6[c] %in% names(BUDEXP_LABEL) && c + 1 <= ncol(raw) &&
+        r6[c + 1] %in% names(BUDEXP_LABEL)) {
+      val_pairs[[paste0(lbl, "_", BUDEXP_LABEL[[r6[c]]])]]   <- c
+      val_pairs[[paste0(lbl, "_", BUDEXP_LABEL[[r6[c+1]]])]] <- c + 1
+    }
+  }
+  for (lbl in names(trail_cols)) val_pairs[[lbl]] <- trail_cols[[lbl]]
+
+  vals <- as.data.frame(lapply(val_pairs, function(c) parse_np_num(raw[[c]])))
+  names(vals) <- names(val_pairs)
+
   df <- bind_cols(
-    tibble(
-      sn     = as.character(raw[[1]]),
-      raw_np = as.character(raw[[2]])
-    ),
+    tibble(sn = as.character(raw[[1]]), raw_np = as.character(raw[[2]])),
     vals
   )
   df <- df[7:nrow(df), , drop = FALSE]
+  df <- df %>% filter(!is.na(raw_np), !grepl("कुल जम्मा|जम्मा$",
+                                              str_squish(as.character(sn))))
 
-  # Drop grand-total row
-  df <- df %>% filter(sn != "कुल जम्मा" & !is.na(raw_np))
-
-  # State machine: walk rows; the FIRST appearance of each sector name is the
-  # sector rollup (DROP); any subsequent appearance is a subsector (KEEP).
   sector_names <- names(SECTOR_PREFIX)
-  current_sector <- NA_character_
-  sectors_seen   <- character()
-  keep_flag      <- logical(nrow(df))
-  sector_col     <- character(nrow(df))
-
+  current_sector <- NA_character_; sectors_seen <- character()
+  keep_flag <- logical(nrow(df)); sector_col <- character(nrow(df))
   for (i in seq_len(nrow(df))) {
     nm <- str_squish(df$raw_np[i])
     if (nm %in% sector_names && !(nm %in% sectors_seen)) {
-      # Sector rollup row
-      sectors_seen   <- c(sectors_seen, nm)
+      sectors_seen <- c(sectors_seen, nm)
       current_sector <- unname(SECTOR_PREFIX[nm])
-      keep_flag[i]   <- FALSE
+      keep_flag[i] <- FALSE
     } else {
-      keep_flag[i]   <- TRUE
-      sector_col[i]  <- current_sector
+      keep_flag[i] <- TRUE; sector_col[i] <- current_sector
     }
   }
-
   df <- df[keep_flag, , drop = FALSE]
-  df$sector    <- sector_col[keep_flag]
+  df$sector <- sector_col[keep_flag]
   df$subsector <- ifelse(df$raw_np %in% names(SUBSECTOR_LABEL),
-                         unname(SUBSECTOR_LABEL[df$raw_np]),
-                         NA_character_)
-
-  # Sanity: no unmapped subsectors
-  bad <- df %>% filter(is.na(subsector))
-  if (nrow(bad)) {
-    stop("Unmapped subsector names in ", basename(file), ":\n  ",
-         paste(head(bad$raw_np, 5), collapse = "\n  "))
-  }
+                         unname(SUBSECTOR_LABEL[df$raw_np]), NA_character_)
+  df <- df %>% filter(!is.na(subsector))
 
   df$fy <- fy
   df$source_file <- basename(file)
-
-  id_cols <- c("fy", "sector", "subsector", "source_file")
-  val_cols <- c("current_bud", "current_exp",
-                "capital_bud", "capital_exp",
-                "financing_bud", "financing_exp",
-                "total_bud", "total_exp",
-                "exp_pct", "balance")
-  df[, c(id_cols[1:3], val_cols, "source_file"), drop = FALSE]
+  df[, c("fy","sector","subsector", names(val_pairs), "source_file"),
+     drop = FALSE]
 }
-
-# ----- RUN -------------------------------------------------------------------
 
 main <- function() {
   stopifnot(dir.exists(INPUT_DIR))
   if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR, recursive = TRUE)
-
-  files <- list.files(INPUT_DIR, pattern = "\\.xlsx$",
-                      full.names = TRUE, recursive = FALSE)
+  files <- list.files(INPUT_DIR, pattern = "\\.xlsx$", full.names = TRUE)
   if (!length(files)) stop("No .xlsx files in ", INPUT_DIR)
-
-  combined <- map_dfr(files, clean_one)
-
-  n_per_file <- combined %>% count(source_file)
-  message(sprintf("Rows: %d (%s)",
-                  nrow(combined),
-                  paste(sprintf("%s=%d", n_per_file$source_file, n_per_file$n),
-                        collapse = ", ")))
-
+  combined <- safe_map_files(files, clean_one)
+  if (!nrow(combined)) { message("No data parsed."); return(invisible(NULL)) }
   out_path <- file.path(OUTPUT_DIR, OUTPUT_FILE)
-  writexl::write_xlsx(combined, out_path)
-  message("Wrote: ", out_path, " (", nrow(combined), " rows x ",
-          ncol(combined), " cols)")
-  invisible(combined)
+  write_xlsx(combined, out_path)
+  message(sprintf("Wrote %s -> %d rows × %d cols",
+                  out_path, nrow(combined), ncol(combined)))
 }
 
 main()
