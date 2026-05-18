@@ -53,7 +53,8 @@ LK_MUN_EN       <- "mun_name"      # set to NA if not present
 LK_LGCODE       <- "lgcode"        # 5-digit code (vmun_code / newcode are the same)
 
 OUTPUT_DIR  <- "lookup"
-OUTPUT_FILE <- "lg_lookup_reconciled.xlsx"
+OUTPUT_FILE <- "lgcode.csv"   # the canonical lookup you point clean_lg_fiscal.R at
+REVIEW_FILE <- "lgcode_needs_review.csv"  # rows where the match was fuzzy or missing
 
 # Column in the data files holding "<mun>, <district>". Sample uses column 3.
 NAME_COL_DEFAULT <- 3
@@ -135,14 +136,12 @@ main <- function() {
   # 2. Load existing lookup
   if (!file.exists(EXISTING_LOOKUP)) {
     message("No existing lookup at ", EXISTING_LOOKUP,
-            " - writing data-only stub with empty lgcode for manual fill.")
+            " - writing stub with blank lgcode for manual fill.")
     out <- data_names %>%
-      mutate(lgcode = NA_character_, district = NA_character_,
-             mun_name = NA_character_, match_type = "none",
-             needs_review = TRUE) %>%
-      select(district_np, mun_np, district, mun_name, lgcode,
-             match_type, needs_review, n_files)
-    writexl::write_xlsx(out, file.path(OUTPUT_DIR, OUTPUT_FILE))
+      mutate(lgcode = NA_character_) %>%
+      select(district_np, mun_np, lgcode)
+    write.csv(out, file.path(OUTPUT_DIR, OUTPUT_FILE),
+              row.names = FALSE, fileEncoding = "UTF-8")
     return(invisible(out))
   }
 
@@ -189,22 +188,36 @@ main <- function() {
     }
   }
   joined$match_type[is.na(joined$match_type)] <- "unmatched"
-  joined$needs_review <- joined$match_type %in% c("fuzzy", "unmatched")
 
+  # Canonical lookup: just the 3 columns the cleaner needs
   out <- joined %>%
-    select(district_np, mun_np, district, mun_name, lgcode,
-           match_type, needs_review, n_files) %>%
-    arrange(needs_review, district_np, mun_np)
+    select(district_np, mun_np, lgcode) %>%
+    arrange(district_np, mun_np)
 
   out_path <- file.path(OUTPUT_DIR, OUTPUT_FILE)
-  writexl::write_xlsx(out, out_path)
+  write.csv(out, out_path, row.names = FALSE, fileEncoding = "UTF-8")
 
-  msg <- table(out$match_type)
+  # Side file: rows you should sanity-check (fuzzy or unmatched). Fix lgcode
+  # for these in lgcode.csv and you're done forever.
+  review <- joined %>%
+    filter(match_type != "exact_normalized") %>%
+    select(district_np, mun_np, lgcode, match_type) %>%
+    arrange(match_type, district_np, mun_np)
+  if (nrow(review)) {
+    write.csv(review, file.path(OUTPUT_DIR, REVIEW_FILE),
+              row.names = FALSE, fileEncoding = "UTF-8")
+  }
+
+  msg <- table(joined$match_type)
   message(sprintf("Wrote %s : %d rows | %s",
                   out_path, nrow(out),
                   paste(names(msg), msg, sep = "=", collapse = ", ")))
-  message("Open the file, fix rows where needs_review=TRUE, then point ",
-          "LOOKUP_FILE in clean_lg_fiscal.R at it.")
+  if (nrow(review)) {
+    message("Review ", file.path(OUTPUT_DIR, REVIEW_FILE),
+            " (", nrow(review), " rows), fix in ", OUTPUT_FILE, ".")
+  } else {
+    message("All rows matched exactly. No review needed.")
+  }
   invisible(out)
 }
 

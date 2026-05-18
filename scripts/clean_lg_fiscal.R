@@ -27,16 +27,14 @@ suppressPackageStartupMessages({
 
 # ----- CONFIG ----------------------------------------------------------------
 INPUT_DIR   <- "क्षेत्रगत बजेट तथा खर्च/Sector LG"   # folder with the raw .xlsx
-LOOKUP_FILE <- "lookup/lg_lookup_master.xlsx"         # district+mun -> lgcode
+LOOKUP_FILE <- "lookup/lgcode.csv"                    # produced once by bootstrap_lookup.R
 OUTPUT_DIR  <- "cleaned_output"                       # where the combined xlsx is written
 OUTPUT_FILE <- "sector_lg_clean.xlsx"
 
-# Lookup column names (adjust to whatever your lookup uses)
-LOOKUP_DISTRICT_NP <- "जिल्ला"
-LOOKUP_MUN_NP      <- "स्थानीय तह"
-LOOKUP_DISTRICT_EN <- "district"
-LOOKUP_MUN_EN      <- "mun_name"
-LOOKUP_LGCODE      <- "lgcode"   # 5-digit; vmun_code / newcode are the same thing
+# Column names in lgcode.csv (defaults match bootstrap_lookup.R output)
+LOOKUP_DISTRICT_NP <- "district_np"
+LOOKUP_MUN_NP      <- "mun_np"
+LOOKUP_LGCODE      <- "lgcode"
 
 # Header detection: row that contains this marker is the LAST header row.
 # (Sample files have "बजेट" / "खर्च" pair in the final header row.)
@@ -154,7 +152,12 @@ load_lookup <- function(path) {
     warning("Lookup file not found: ", path, " - lgcode will be NA.")
     return(NULL)
   }
-  lk <- read_excel(path)
+  lk <- if (grepl("\\.csv$", path, ignore.case = TRUE)) {
+    read.csv(path, fileEncoding = "UTF-8", stringsAsFactors = FALSE,
+             check.names = FALSE)
+  } else {
+    read_excel(path)
+  }
   needed <- c(LOOKUP_DISTRICT_NP, LOOKUP_MUN_NP, LOOKUP_LGCODE)
   miss   <- setdiff(needed, names(lk))
   if (length(miss)) stop("Lookup missing columns: ", paste(miss, collapse = ", "))
@@ -162,13 +165,9 @@ load_lookup <- function(path) {
     transmute(
       district_np = str_squish(.data[[LOOKUP_DISTRICT_NP]]),
       mun_np      = str_squish(.data[[LOOKUP_MUN_NP]]),
-      district_key = normalize_np(.data[[LOOKUP_DISTRICT_NP]]),
-      mun_key      = normalize_np(.data[[LOOKUP_MUN_NP]]),
-      district     = if (LOOKUP_DISTRICT_EN %in% names(.)) .data[[LOOKUP_DISTRICT_EN]] else NA_character_,
-      mun_name     = if (LOOKUP_MUN_EN      %in% names(.)) .data[[LOOKUP_MUN_EN]]      else NA_character_,
-      lgcode       = as.character(.data[[LOOKUP_LGCODE]])
+      lgcode      = as.character(.data[[LOOKUP_LGCODE]])
     ) %>%
-    distinct(district_key, mun_key, .keep_all = TRUE)
+    distinct(district_np, mun_np, .keep_all = TRUE)
 }
 
 # ----- CLEAN ONE FILE --------------------------------------------------------
@@ -239,42 +238,17 @@ clean_one <- function(file, lookup) {
     if (mean(!is.na(coerced)) > 0.6) data_block[[nc]] <- coerced
   }
 
-  # Build normalized join keys
-  data_block$district_key <- normalize_np(data_block$district_np)
-  data_block$mun_key      <- normalize_np(data_block$mun_np)
-
-  # Join lookup -> lgcode (normalized exact match first, then fuzzy within district)
+  # Simple left join on exact (district_np, mun_np). The lookup was built
+  # from the data, so names already match -- no fuzzy logic needed.
   if (!is.null(lookup)) {
     data_block <- data_block %>%
-      left_join(lookup %>% select(district_key, mun_key,
-                                  district, mun_name, lgcode),
-                by = c("district_key", "mun_key"))
-
-    miss_idx <- which(is.na(data_block$lgcode))
-    if (length(miss_idx) && has_stringdist) {
-      for (i in miss_idx) {
-        dk <- data_block$district_key[i]
-        cand <- lookup %>% filter(district_key == dk)
-        if (nrow(cand)) {
-          m <- fuzzy_match(data_block$mun_key[i], cand$mun_key, max_dist = 2)
-          if (!is.na(m)) {
-            hit <- cand %>% filter(mun_key == m) %>% slice(1)
-            data_block$lgcode[i]   <- hit$lgcode
-            data_block$district[i] <- hit$district
-            data_block$mun_name[i] <- hit$mun_name
-          }
-        }
-      }
-    }
+      left_join(lookup, by = c("district_np", "mun_np"))
   } else {
-    data_block$lgcode   <- NA_character_
-    data_block$district <- NA_character_
-    data_block$mun_name <- NA_character_
+    data_block$lgcode <- NA_character_
   }
 
   # Reorder useful cols up front
-  front <- intersect(c("lgcode", "district", "mun_name",
-                       "district_np", "mun_np",
+  front <- intersect(c("lgcode", "district_np", "mun_np",
                        "lg_code_raw", "lg_name_np", "sn"),
                      names(data_block))
   data_block <- data_block %>%
