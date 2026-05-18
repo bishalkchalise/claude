@@ -1,12 +1,20 @@
 # =============================================================================
-# Bootstrap an LG lookup from the raw data files themselves.
+# Reconcile your existing LG lookup with the names actually used in the data.
 #
-# The xlsx files already carry the LG code in column B (e.g. ८०१०१४०१) and the
-# combined "mun name, district" string in column C. We scan every file, extract
-# unique (district, mun_name, lg_code) tuples, and write them to one xlsx that
-# YOU then review once and use as the canonical lookup for clean_lg_fiscal.R.
+# Problem: your lookup has district + mun_name + lgcode (5-digit), but the
+# mun_name spelling/spacing/suffix in the data files may not match exactly.
+# This script:
+#   1. Scans every xlsx under SCAN_DIRS and extracts unique (district, mun)
+#      pairs from column C (format: "<mun>, <district>")
+#   2. Loads your existing EXISTING_LOOKUP
+#   3. Joins the two on NORMALIZED names (strips suffixes, whitespace,
+#      punctuation), then fuzzy-matches anything still missing
+#   4. Writes ONE reconciled lookup with district_np / mun_np EXACTLY as they
+#      appear in the data, plus the lgcode from your lookup
+#   5. Flags rows you need to fix by hand
 #
-# Run once. After review, point LOOKUP_FILE in clean_lg_fiscal.R at the result.
+# Run once. Fix the flagged rows. Then point LOOKUP_FILE in
+# clean_lg_fiscal.R at the resulting file.
 # =============================================================================
 
 suppressPackageStartupMessages({
@@ -15,11 +23,13 @@ suppressPackageStartupMessages({
   library(dplyr)
   library(stringr)
   library(purrr)
+  has_stringdist <- requireNamespace("stringdist", quietly = TRUE)
 })
 
 # ----- CONFIG ----------------------------------------------------------------
+
 # Scan EVERY xlsx under these folders (recursive). Add/remove as needed.
-SCAN_DIRS    <- c(
+SCAN_DIRS <- c(
   "क्षेत्रगत बजेट तथा खर्च",
   "बजेट र खर्चको सारांश",
   "खर्च शीर्षक अनुसार बजेट तथा खर्च",
@@ -32,27 +42,22 @@ SCAN_DIRS    <- c(
   "स्थानीय तह अनुसार Sectoral budget and expenditure"
 )
 
+# Your existing lookup. Set the path and the column names below.
+EXISTING_LOOKUP <- "lookup/lg_lookup_master.xlsx"
+LK_DISTRICT_NP  <- "जिल्ला"        # Nepali district column in your lookup
+LK_MUN_NP       <- "स्थानीय तह"    # Nepali mun column in your lookup
+LK_DISTRICT_EN  <- "district"      # set to NA if not present
+LK_MUN_EN       <- "mun_name"      # set to NA if not present
+LK_LGCODE       <- "lgcode"        # 5-digit code (vmun_code / newcode are the same)
+
 OUTPUT_DIR  <- "lookup"
-OUTPUT_FILE <- "lg_lookup_bootstrap.xlsx"
+OUTPUT_FILE <- "lg_lookup_reconciled.xlsx"
 
-# Where the LG code and combined "mun, district" string typically live.
-# These match the sample but the script also tries to auto-detect if it doesn't
-# find numbers / commas at the expected columns.
-CODE_COL_DEFAULT <- 2
+# Column in the data files holding "<mun>, <district>". Sample uses column 3.
 NAME_COL_DEFAULT <- 3
-
-# Header rows to skip when scanning for data. We try a range and pick whichever
-# yields the most parseable rows.
-SKIP_CANDIDATES <- 5:9
+SKIP_CANDIDATES  <- 5:9   # header rows to try; picks the one that yields most data
 
 # ----- HELPERS ---------------------------------------------------------------
-
-np_digits_to_ascii <- function(x) {
-  x <- as.character(x)
-  np <- c("०","१","२","३","४","५","६","७","८","९")
-  for (i in 0:9) x <- gsub(np[i+1], as.character(i), x, fixed = TRUE)
-  x
-}
 
 normalize_np <- function(x) {
   x <- as.character(x)
@@ -68,45 +73,33 @@ normalize_np <- function(x) {
   str_trim(x)
 }
 
-# Score a (skip, code_col, name_col) combo by # of rows that look like real data
-score_combo <- function(file, skip, code_col, name_col) {
-  df <- tryCatch(
-    suppressMessages(read_excel(file, skip = skip, col_names = FALSE,
-                                .name_repair = "minimal")),
-    error = function(e) NULL
-  )
-  if (is.null(df) || ncol(df) < max(code_col, name_col)) return(0L)
-  codes <- np_digits_to_ascii(df[[code_col]])
-  names_v <- as.character(df[[name_col]])
-  ok <- !is.na(codes) & grepl("^[0-9]{4,10}$", codes) &
-        !is.na(names_v) & grepl(",", names_v)
-  sum(ok)
+fuzzy_match <- function(name, candidates, max_dist = 2) {
+  if (!has_stringdist || length(candidates) == 0 || is.na(name)) return(NA_integer_)
+  d <- stringdist::stringdist(name, candidates, method = "osa")
+  if (min(d) <= max_dist) which.min(d) else NA_integer_
 }
 
-extract_one <- function(file) {
-  best <- list(n = 0L, skip = NA, code = CODE_COL_DEFAULT, name = NAME_COL_DEFAULT)
+# Try a few skip-row counts and pick the one that yields the most rows whose
+# value in NAME_COL_DEFAULT contains a comma (the "mun, district" pattern).
+extract_names_from_file <- function(file) {
+  best <- list(n = 0L, df = NULL)
   for (sk in SKIP_CANDIDATES) {
-    for (cc in c(CODE_COL_DEFAULT, 1, 3)) {
-      for (nc in c(NAME_COL_DEFAULT, 2, 4)) {
-        if (cc == nc) next
-        n <- score_combo(file, sk, cc, nc)
-        if (n > best$n) best <- list(n = n, skip = sk, code = cc, name = nc)
-      }
-    }
+    df <- tryCatch(
+      suppressMessages(read_excel(file, skip = sk, col_names = FALSE,
+                                  .name_repair = "minimal")),
+      error = function(e) NULL
+    )
+    if (is.null(df) || ncol(df) < NAME_COL_DEFAULT) next
+    v <- as.character(df[[NAME_COL_DEFAULT]])
+    ok <- !is.na(v) & grepl(",", v)
+    if (sum(ok) > best$n) best <- list(n = sum(ok), df = df[ok, , drop = FALSE])
   }
   if (best$n == 0) {
     message("  skip (no parseable rows): ", basename(file))
     return(NULL)
   }
-  df <- suppressMessages(read_excel(file, skip = best$skip, col_names = FALSE,
-                                    .name_repair = "minimal"))
-  codes  <- np_digits_to_ascii(df[[best$code]])
-  names_v <- as.character(df[[best$name]])
-  ok <- !is.na(codes) & grepl("^[0-9]{4,10}$", codes) &
-        !is.na(names_v) & grepl(",", names_v)
-  parts <- str_split_fixed(names_v[ok], ",", 2)
+  parts <- str_split_fixed(as.character(best$df[[NAME_COL_DEFAULT]]), ",", 2)
   tibble(
-    lg_code_raw = codes[ok],
     mun_np      = str_squish(parts[, 1]),
     district_np = str_squish(parts[, 2]),
     source_file = basename(file)
@@ -118,48 +111,99 @@ extract_one <- function(file) {
 main <- function() {
   if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR, recursive = TRUE)
 
+  # 1. Collect every (district, mun) seen in the data
   dirs <- SCAN_DIRS[dir.exists(SCAN_DIRS)]
   if (!length(dirs)) stop("None of SCAN_DIRS exist from working directory: ", getwd())
-
   files <- unlist(lapply(dirs, list.files,
                          pattern = "\\.xlsx$",
                          recursive = TRUE, full.names = TRUE))
   message("Scanning ", length(files), " files ...")
-  raw <- map_dfr(files, extract_one)
-  if (!nrow(raw)) stop("No (code, name, district) rows extracted. Check column / skip defaults.")
 
-  # The same (district, mun) should map to a single lgcode. lgcode in lookups
-  # is typically 5 digits (vmun_code / newcode); take the LAST 5 of the raw code
-  # but also keep the full raw code for traceability.
-  agg <- raw %>%
-    mutate(
-      district_key = normalize_np(district_np),
-      mun_key      = normalize_np(mun_np),
-      lgcode_5     = str_sub(lg_code_raw, -5)
-    ) %>%
+  data_names <- map_dfr(files, extract_names_from_file) %>%
+    mutate(district_key = normalize_np(district_np),
+           mun_key      = normalize_np(mun_np)) %>%
     group_by(district_key, mun_key) %>%
-    summarise(
-      district_np   = first(district_np),
-      mun_np        = first(mun_np),
-      lgcode        = paste(sort(unique(lgcode_5)), collapse = "|"),
-      lg_code_raw   = paste(sort(unique(lg_code_raw)), collapse = "|"),
-      n_files       = n_distinct(source_file),
-      .groups = "drop"
-    ) %>%
-    arrange(district_np, mun_np)
+    summarise(district_np = first(district_np),
+              mun_np      = first(mun_np),
+              n_files     = n_distinct(source_file),
+              .groups = "drop")
 
-  # Flag rows where the same (district, mun) ended up with >1 distinct 5-digit
-  # code — those need your manual review.
-  agg <- agg %>%
-    mutate(needs_review = grepl("\\|", lgcode))
+  message("Unique (district, mun) pairs in data: ", nrow(data_names))
+
+  # 2. Load existing lookup
+  if (!file.exists(EXISTING_LOOKUP)) {
+    message("No existing lookup at ", EXISTING_LOOKUP,
+            " - writing data-only stub with empty lgcode for manual fill.")
+    out <- data_names %>%
+      mutate(lgcode = NA_character_, district = NA_character_,
+             mun_name = NA_character_, match_type = "none",
+             needs_review = TRUE) %>%
+      select(district_np, mun_np, district, mun_name, lgcode,
+             match_type, needs_review, n_files)
+    writexl::write_xlsx(out, file.path(OUTPUT_DIR, OUTPUT_FILE))
+    return(invisible(out))
+  }
+
+  lk_raw <- read_excel(EXISTING_LOOKUP)
+  needed <- c(LK_DISTRICT_NP, LK_MUN_NP, LK_LGCODE)
+  miss <- setdiff(needed, names(lk_raw))
+  if (length(miss)) stop("Existing lookup missing columns: ", paste(miss, collapse = ", "))
+
+  lk <- lk_raw %>%
+    transmute(
+      lk_district_np = .data[[LK_DISTRICT_NP]],
+      lk_mun_np      = .data[[LK_MUN_NP]],
+      district_key   = normalize_np(.data[[LK_DISTRICT_NP]]),
+      mun_key        = normalize_np(.data[[LK_MUN_NP]]),
+      district = if (!is.na(LK_DISTRICT_EN) && LK_DISTRICT_EN %in% names(lk_raw))
+                   .data[[LK_DISTRICT_EN]] else NA_character_,
+      mun_name = if (!is.na(LK_MUN_EN) && LK_MUN_EN %in% names(lk_raw))
+                   .data[[LK_MUN_EN]] else NA_character_,
+      lgcode   = as.character(.data[[LK_LGCODE]])
+    ) %>%
+    distinct(district_key, mun_key, .keep_all = TRUE)
+
+  # 3. Normalized exact join, then fuzzy fallback for misses
+  joined <- data_names %>%
+    left_join(lk %>% select(district_key, mun_key,
+                            district, mun_name, lgcode),
+              by = c("district_key", "mun_key")) %>%
+    mutate(match_type = if_else(!is.na(lgcode), "exact_normalized", NA_character_))
+
+  miss_idx <- which(is.na(joined$lgcode))
+  if (length(miss_idx) && has_stringdist) {
+    message("Fuzzy-matching ", length(miss_idx), " unmatched rows ...")
+    for (i in miss_idx) {
+      dk <- joined$district_key[i]
+      cand <- lk %>% filter(district_key == dk)
+      if (!nrow(cand)) next
+      hit <- fuzzy_match(joined$mun_key[i], cand$mun_key, max_dist = 2)
+      if (!is.na(hit)) {
+        joined$lgcode[i]     <- cand$lgcode[hit]
+        joined$district[i]   <- cand$district[hit]
+        joined$mun_name[i]   <- cand$mun_name[hit]
+        joined$match_type[i] <- "fuzzy"
+      }
+    }
+  }
+  joined$match_type[is.na(joined$match_type)] <- "unmatched"
+  joined$needs_review <- joined$match_type %in% c("fuzzy", "unmatched")
+
+  out <- joined %>%
+    select(district_np, mun_np, district, mun_name, lgcode,
+           match_type, needs_review, n_files) %>%
+    arrange(needs_review, district_np, mun_np)
 
   out_path <- file.path(OUTPUT_DIR, OUTPUT_FILE)
-  writexl::write_xlsx(agg, out_path)
-  message(sprintf("Wrote %s : %d unique LGs (%d need review)",
-                  out_path, nrow(agg), sum(agg$needs_review)))
-  message("Add english 'district' and 'mun_name' columns by hand, save, ",
-          "then point LOOKUP_FILE at this file.")
-  invisible(agg)
+  writexl::write_xlsx(out, out_path)
+
+  msg <- table(out$match_type)
+  message(sprintf("Wrote %s : %d rows | %s",
+                  out_path, nrow(out),
+                  paste(names(msg), msg, sep = "=", collapse = ", ")))
+  message("Open the file, fix rows where needs_review=TRUE, then point ",
+          "LOOKUP_FILE in clean_lg_fiscal.R at it.")
+  invisible(out)
 }
 
 main()
