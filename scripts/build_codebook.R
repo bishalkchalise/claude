@@ -293,11 +293,62 @@ lg_line_item <- bind_rows(
           "First digit indicates fund type (see fund_type col)."))
 )
 
+# ----- बजेट र खर्चको सारांश / LG Kosh ---------------------------------------
+set_ctx("LG Kosh", "lg_kosh.xlsx")
+lg_kosh <- bind_rows(
+  e("fund", "आकस्मिक कोष",                      "contingency",
+    "Contingency Fund — money set aside for unforeseen expenses"),
+  e("fund", "कर्मचारी कल्याण कोष",                "emp_welfare",
+    "Employee Welfare Fund — benefits / welfare for LG staff"),
+  e("fund", "कार्य संचालन कोष - बिबिध",         "ops_misc",
+    "Operations Fund (Miscellaneous) — general operations spending"),
+  e("fund", "गरिवी निवारण तथा सामाजिक परिचालन कोष", "poverty_social",
+    "Poverty Alleviation & Social Mobilization Fund"),
+  e("fund", "प्रकोप व्यवस्थापन कोष",              "disaster",
+    "Disaster Management Fund — emergency response & relief"),
+  e("fund", "बिबिध खर्च खाता/कोष- बैंक (ग २-७)", "misc_bank",
+    "Miscellaneous Expense Account / Fund (Bank Group 2-7)"),
+  e("fund", "मर्मत सम्भार कोष",                  "maintenance",
+    "Maintenance Fund — for asset upkeep & repairs"),
+  e("fund", "महिला तथा वाल विकास कोष",         "women_child",
+    "Women & Child Development Fund"),
+  e("fund", "मानव संशाधन विकास कोष",          "hrd_fund",
+    "Human Resource Development Fund"),
+  e("fund", "वातावरण ब्यवस्थापन कोष",           "env_mgmt",
+    "Environmental Management Fund"),
+  e("fund", "स्थानीय विकास कोष कार्यक्रम संचालन कोष", "ldf_ops",
+    "Local Development Fund Program Operations Fund"),
+  e("fund", "स्थानीय विकास घुम्ती कोष",          "ldf_revolving",
+    "Local Development Revolving Fund"),
+  e("fund", "जम्मा",                            "(dropped)",
+    "Grand-total fund column at end of source"),
+  e("measure", "बजेट", "<fund>_bud", "Budget allocation per fund"),
+  e("measure", "खर्च", "<fund>_exp", "Expenditure per fund")
+)
+
+# ----- बजेट र खर्चको सारांश / LG Summary -------------------------------------
+set_ctx("LG Summary", "lg_summary.xlsx")
+lg_summary <- bind_rows(
+  e("measure", "शुरुको मौज्दात",  "opening_balance",
+    "Opening balance at start of fiscal year (Operational Fund)"),
+  e("measure", "प्राप्त",        "received",
+    "Funds received during the year (may be negative for adjustments)"),
+  e("measure", "जम्मा प्राप्ती",   "total_receipts",
+    "Total receipts = opening balance + received"),
+  e("measure", "खर्च",         "expenditure",
+    "Expenditure during the year"),
+  e("measure", "मौज्दात",       "closing_balance",
+    "Closing balance at end of fiscal year"),
+  e("id_col",  "क्र.सं.",      "(dropped)",   "Serial number"),
+  e("id_col",  "जम्मा (row)", "(dropped)",  "Grand-total row at bottom of source")
+)
+
 # ----- combine ---------------------------------------------------------------
 codebook <- bind_rows(
   sector_lg, sector_fund_type, sector_monthly_exp, sector_source, sector_trimester,
   projection_summary, projection_source_fund_type,
-  lg_line_item
+  lg_line_item,
+  lg_kosh, lg_summary
 )
 
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR, recursive = TRUE)
