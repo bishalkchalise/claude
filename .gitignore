@@ -3,3 +3,7 @@ Thumbs.db
 ~$*.xlsx
 .vscode/
 *.tmp
+
+# Local cleaning pipeline artifacts
+cleaned_output/
+lookup/

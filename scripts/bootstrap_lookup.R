@@ -17,6 +17,8 @@
 # clean_lg_fiscal.R at the resulting file.
 # =============================================================================
 
+suppressWarnings(Sys.setlocale("LC_ALL", "C.UTF-8"))
+
 suppressPackageStartupMessages({
   library(readxl)
   library(writexl)

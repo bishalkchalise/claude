@@ -12,6 +12,8 @@
 # Usage: edit the three paths under "CONFIG", then source the file.
 # =============================================================================
 
+suppressWarnings(Sys.setlocale("LC_ALL", "C.UTF-8"))
+
 suppressPackageStartupMessages({
   library(readxl)
   library(writexl)
@@ -25,7 +27,7 @@ suppressPackageStartupMessages({
 
 # ----- CONFIG ----------------------------------------------------------------
 INPUT_DIR   <- "क्षेत्रगत बजेट तथा खर्च/Sector LG"   # folder with the raw .xlsx
-LOOKUP_FILE <- "lookup/lg_lookup.xlsx"                # district+mun -> lgcode
+LOOKUP_FILE <- "lookup/lg_lookup_master.xlsx"         # district+mun -> lgcode
 OUTPUT_DIR  <- "cleaned_output"                       # where the combined xlsx is written
 OUTPUT_FILE <- "sector_lg_clean.xlsx"
 
