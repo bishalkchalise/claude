@@ -101,10 +101,29 @@ sector_fund_type <- bind_rows(
   entry("Sector Fund Type", "id_col",    "कुल जम्मा", "(dropped)", "grand total row")
 )
 
+# --- क्षेत्रगत बजेट तथा खर्च / Sector Monthly Exp ----------------------------
+sector_monthly_exp <- bind_rows(
+  entry("Sector Monthly Exp", "month", "साउन",    "exp_saun",     "Nepali FY month 1 (mid Jul-Aug)"),
+  entry("Sector Monthly Exp", "month", "भदौ",     "exp_bhadau",   "month 2"),
+  entry("Sector Monthly Exp", "month", "आस्बिन",  "exp_asoj",     "month 3"),
+  entry("Sector Monthly Exp", "month", "कार्तिक",  "exp_kartik",   "month 4"),
+  entry("Sector Monthly Exp", "month", "मार्ग",    "exp_mangsir",  "month 5"),
+  entry("Sector Monthly Exp", "month", "पौष",    "exp_poush",    "month 6"),
+  entry("Sector Monthly Exp", "month", "माघ",    "exp_magh",     "month 7"),
+  entry("Sector Monthly Exp", "month", "फागुन",   "exp_falgun",   "month 8"),
+  entry("Sector Monthly Exp", "month", "चैत्र",    "exp_chaitra",  "month 9"),
+  entry("Sector Monthly Exp", "month", "बैशाख",   "exp_baisakh",  "month 10"),
+  entry("Sector Monthly Exp", "month", "जेठ",    "exp_jestha",   "month 11"),
+  entry("Sector Monthly Exp", "month", "असार",   "exp_asar",     "month 12 (Jun-mid Jul)"),
+  entry("Sector Monthly Exp", "measure", "बजेट", "annual_bud",   "annual budget"),
+  entry("Sector Monthly Exp", "measure", "जम्मा", "exp_total",    "sum of months (may not match exactly due to source data)")
+)
+
 # --- combine all blocks ------------------------------------------------------
 codebook <- bind_rows(
   sector_lg,
-  sector_fund_type
+  sector_fund_type,
+  sector_monthly_exp
   # future blocks: line_item, target_group, summary, ...
 )
 
