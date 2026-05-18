@@ -86,9 +86,25 @@ sector_lg <- bind_rows(
   entry("Sector LG", "id_col",    "जम्मा",                "(dropped)",  "grand total col/row")
 )
 
+# --- क्षेत्रगत बजेट तथा खर्च / Sector Fund Type ------------------------------
+sector_fund_type <- bind_rows(
+  # reuses sector + subsector labels from sector_lg block
+  entry("Sector Fund Type", "fund_type", "चालु",    "current",   "current/recurrent"),
+  entry("Sector Fund Type", "fund_type", "पूँजीगत",   "capital",   "capital spending"),
+  entry("Sector Fund Type", "fund_type", "वित्तीय",   "financing", "financing"),
+  entry("Sector Fund Type", "fund_type", "जम्मा",    "total",     "row total across fund types"),
+  entry("Sector Fund Type", "measure",   "बजेट",     "bud",       "budget"),
+  entry("Sector Fund Type", "measure",   "खर्च",     "exp",       "expenditure"),
+  entry("Sector Fund Type", "measure",   "खर्च(%)",  "exp_pct",   "expense %"),
+  entry("Sector Fund Type", "measure",   "मौज्दात",   "balance",   "closing balance"),
+  entry("Sector Fund Type", "id_col",    "शीर्षक",   "(split)",   "split into sector + subsector"),
+  entry("Sector Fund Type", "id_col",    "कुल जम्मा", "(dropped)", "grand total row")
+)
+
 # --- combine all blocks ------------------------------------------------------
 codebook <- bind_rows(
-  sector_lg
+  sector_lg,
+  sector_fund_type
   # future blocks: line_item, target_group, summary, ...
 )
 
